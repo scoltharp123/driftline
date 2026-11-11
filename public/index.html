@@ -116,7 +116,7 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <nav class="tabs" id="tabs">
     <a href="#today">Today</a><a href="#rivers">Rivers</a><a href="#hatches">Hatches</a><a href="#flies">Fly Box</a>
-    <a href="#bugid">Bug ID</a><a href="#guide">Ask a Guide</a><a href="#log">Catch Log</a><a href="#trip">Trip Planner</a>
+    <a href="#bugid">Bug ID</a><a href="#guide" class="hidden" id="guideTab">Ask a Guide</a><a href="#log">Catch Log</a><a href="#trip">Trip Planner</a>
     <a href="#learn">Knots &amp; Rigs</a><a href="#map">Map</a>
   </nav>
 </header>
@@ -181,9 +181,9 @@ details summary{cursor:pointer;font-weight:600}
 
   <!-- BUG ID -->
   <section class="view" id="v-bugid">
-    <div><h2>What's that bug?</h2><p class="lede">Flip a rock or catch one off the water, take a photo, and match it to a fly. No signal? Use the field key below it.</p></div>
+    <div><h2>What's that bug?</h2><p class="lede">Flip a rock or catch one off the water, answer a few questions about it, and match it to a fly. Works with no signal.</p></div>
     <div class="cols">
-      <div class="card stack" id="photoCard">
+      <div class="card stack hidden" id="photoCard">
         <h3>Photo ID</h3>
         <label class="f" for="bugPhoto">Photo of the insect<input id="bugPhoto" type="file" accept="image/*"></label>
         <label class="f" for="bugRiver">Where you found it<select id="bugRiver"></select></label>
@@ -213,7 +213,7 @@ details summary{cursor:pointer;font-weight:600}
       <div class="chat" id="chat"></div>
       <div class="row small" id="guideStarters"></div>
       <form class="row" id="chatForm"><input id="chatIn" style="flex:1" placeholder="How should I fish the Crooked at 90 CFS in December?" aria-label="Your question"><button class="btn" type="submit">Ask</button></form>
-      <p class="muted small hidden" id="guideOff">The guide isn't available right now. Everything else in Driftline works without it.</p>
+      <p class="muted small hidden" id="guideOff">Ask a Guide isn't part of this version of Driftline. Everything else works without it.</p>
     </div>
   </section>
 
@@ -439,12 +439,14 @@ async function getJSONDirect(url,ms){
 }
 let PROXY_OK=location.protocol.startsWith("http");
 async function getJSON(url,ms=9000){
-  // On the hosted site, /api/data relays USGS and weather requests (cached at the edge).
-  if(PROXY_OK){
+  // Fetch straight from USGS / Open-Meteo. Only if the browser blocks that,
+  // fall back to the site's small /api/data relay.
+  try{return await getJSONDirect(url,ms)}
+  catch(e){
+    if(!PROXY_OK)throw e;
     try{return await getJSONDirect("/api/data?url="+encodeURIComponent(url),ms+6000)}
-    catch(e){if(String(e).includes("HTTP 404")||e instanceof TypeError)PROXY_OK=false}
+    catch(e2){if(String(e2).includes("HTTP 404")||e2 instanceof TypeError)PROXY_OK=false;throw e2}
   }
-  return getJSONDirect(url,ms);
 }
 const USGS_OGC=["https://api.waterdata.usgs.gov/ogcapi/v0/collections","https://api.waterdata.usgs.gov/ogcapi/v1/collections"];
 async function fetchFlow(site){
@@ -1056,33 +1058,6 @@ function updateBadge(){
     n.classList.remove("hidden");
     n.innerHTML=`Live USGS flows and weather couldn't load here. This page's host blocks outside data, or you're offline. Recommendations use the hatch calendar, and you can enter flows and temps by hand on any river page. When Driftline runs on a normal web host, the readings fill in on their own.`}
 }
-async function shrinkImage(file){
-  const url=URL.createObjectURL(file);
-  try{
-    const img=await new Promise((ok,bad)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=bad;i.src=url});
-    const s=Math.min(1,1280/Math.max(img.naturalWidth,img.naturalHeight));
-    const cv=document.createElement("canvas");cv.width=Math.round(img.naturalWidth*s);cv.height=Math.round(img.naturalHeight*s);
-    cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);
-    return {b64:cv.toDataURL("image/jpeg",0.85).split(",")[1],type:"image/jpeg"};
-  }finally{URL.revokeObjectURL(url)}
-}
-function hostedSample(){
-  const call=async(input,opts={})=>{
-    const messages=typeof input==="string"?[{role:"user",content:input}]:input;
-    const r=await fetch("/api/ai",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages}),signal:opts.signal});
-    if(r.status===429)throw {code:"rate_limited"};if(!r.ok||!r.body)throw {code:"error"};
-    const rd=r.body.getReader();const dec=new TextDecoder();let text="";
-    for(;;){const {done,value}=await rd.read();if(done)break;const delta=dec.decode(value,{stream:true});text+=delta;if(opts.onText)opts.onText({text,delta})}
-    return {text,truncated:false};
-  };
-  call.json=async(prompt,opts={})=>{
-    let image,mediaType;if(opts.images&&opts.images[0]){const s=await shrinkImage(opts.images[0]);image=s.b64;mediaType=s.type}
-    const r=await fetch("/api/ai?mode=json",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({prompt,image,mediaType})});
-    if(r.status===429)throw {code:"rate_limited"};const j=await r.json().catch(()=>({error:1}));if(!r.ok||j.error)throw {code:"error"};return j;
-  };
-  call.limits=async()=>({images:true});
-  return call;
-}
 async function initSample(){
   try{
     if(!window.claude||typeof window.claude.use!=="function")throw 0;
@@ -1090,12 +1065,10 @@ async function initSample(){
     if(!SAMPLE)throw 0;
     try{SAMPLE_IMG=!!(await SAMPLE.limits())?.images}catch(e){SAMPLE_IMG=false}
   }catch(e){SAMPLE=null}
-  if(!SAMPLE&&location.protocol.startsWith("http")){
-    try{const r=await fetch("/api/ai");const j=await r.json();if(j&&j.ok){SAMPLE=hostedSample();SAMPLE_IMG=true}}catch(e){}
-  }
   $("#guideOff").classList.toggle("hidden",!!SAMPLE);
   $("#chatForm").classList.toggle("hidden",!SAMPLE);$("#guideStarters").classList.toggle("hidden",!SAMPLE);
-  if(!SAMPLE||!SAMPLE_IMG){$("#photoCard").innerHTML=`<h3>Photo ID</h3><p class="small muted">Photo ID isn't available right now. The field key works anywhere, including with no signal.</p>`}
+  $("#guideTab").classList.toggle("hidden",!SAMPLE);
+  $("#photoCard").classList.toggle("hidden",!(SAMPLE&&SAMPLE_IMG));
 }
 document.addEventListener("DOMContentLoaded",()=>{});
 (function init(){
