@@ -112,10 +112,10 @@ details summary{cursor:pointer;font-weight:600}
   <div class="brand">
     <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M3 20 C 9 8, 15 26, 27 10" fill="none" stroke="var(--river)" stroke-width="2.4" stroke-linecap="round"/><circle cx="27" cy="10" r="2.6" fill="var(--hackle)"/></svg>
     <div><h1>Driftline</h1><div class="sub">Flows, hatches and flies for the water you're fishing</div></div>
-    <span class="live pill na" id="liveBadge"><span class="dot"></span>Checking feeds</span>
+    <span class="live row" style="gap:6px"><a class="pill na hidden" id="crewBadge" href="#crew" style="text-decoration:none"></a><span class="pill na" id="liveBadge"><span class="dot"></span>Checking feeds</span></span>
   </div>
   <nav class="tabs" id="tabs">
-    <a href="#today">Today</a><a href="#rivers">Rivers</a><a href="#hatches">Hatches</a><a href="#flies">Fly Box</a>
+    <a href="#today">Today</a><a href="#crew">Crew</a><a href="#rivers">Rivers</a><a href="#hatches">Hatches</a><a href="#flies">Fly Box</a>
     <a href="#bugid">Bug ID</a><a href="#guide" class="hidden" id="guideTab">Ask a Guide</a><a href="#log">Catch Log</a><a href="#trip">Trip Planner</a>
     <a href="#learn">Knots &amp; Rigs</a><a href="#map">Map</a>
   </nav>
@@ -127,6 +127,7 @@ details summary{cursor:pointer;font-weight:600}
   <section class="view" id="v-today">
     <div><h2 id="todayTitle">Where to fish today</h2><p class="lede" id="todayLede"></p></div>
     <div class="grid" id="todayGrid"></div>
+    <div class="card stack" id="weekend"></div>
     <div class="card"><h3>Tie these on across the region</h3><p class="muted small" id="regionFlyNote"></p><div class="cols" id="regionFlies"></div></div>
   </section>
 
@@ -213,7 +214,45 @@ details summary{cursor:pointer;font-weight:600}
       <div class="chat" id="chat"></div>
       <div class="row small" id="guideStarters"></div>
       <form class="row" id="chatForm"><input id="chatIn" style="flex:1" placeholder="How should I fish the Crooked at 90 CFS in December?" aria-label="Your question"><button class="btn" type="submit">Ask</button></form>
-      <p class="muted small hidden" id="guideOff">Ask a Guide isn't part of this version of Driftline. Everything else works without it.</p>
+      <p class="muted small hidden" id="guideOff">Ask a Guide is for crew members. Join from the Crew tab with the crew code.</p>
+    </div>
+  </section>
+
+  <!-- CREW -->
+  <section class="view" id="v-crew">
+    <div><h2>Crew</h2><p class="lede">Reports and catches from everyone in the crew. Post how it fished so the next person knows what to tie on.</p></div>
+    <div id="crewJoin" class="card stack hidden">
+      <h3>Join the crew</h3>
+      <p class="small muted">Enter your name and the crew code. Joining turns on shared reports, the shared catch log, Ask a Guide and Photo ID.</p>
+      <form class="form" id="joinForm">
+        <label class="f" for="jName">Your name<input id="jName" required maxlength="40" autocomplete="nickname"></label>
+        <label class="f" for="jCode">Crew code<input id="jCode" required autocomplete="off"></label>
+        <div class="row" style="align-self:end"><button class="btn" type="submit">Join</button></div>
+      </form>
+      <p class="small" id="joinMsg"></p>
+    </div>
+    <div id="crewOff" class="card hidden"><p class="small muted">Crew features run on the Driftline website at driftline-fly.netlify.app. This copy keeps your catch log on its own.</p></div>
+    <div id="crewMain" class="stack hidden">
+      <div class="card stack">
+        <div class="row" style="justify-content:space-between"><h3>Post a report</h3><span class="small muted" id="crewWho"></span></div>
+        <form class="form" id="repForm">
+          <label class="f" for="repRiver">Water<select id="repRiver"></select></label>
+          <label class="f" for="repDate">Date<input id="repDate" type="date" required></label>
+          <label class="f" for="repRating">How it fished<select id="repRating"><option value="5">Epic</option><option value="4">Great</option><option value="3" selected>Good</option><option value="2">Fair</option><option value="1">Slow</option></select></label>
+          <label class="f" for="repFlies">Flies that worked<input id="repFlies" list="flyNames" placeholder="BWO Sparkle Dun #20, Zebra Midge #20"></label>
+          <label class="f" for="repNotes" style="grid-column:1/-1">What happened<textarea id="repNotes" rows="3" placeholder="Fish rising in the slow water below the bridge from 1 to 3. Nothing on top before that."></textarea></label>
+          <label class="f" for="repPhoto">Photo (optional)<input id="repPhoto" type="file" accept="image/*"></label>
+          <div class="row" style="align-self:end"><button class="btn" type="submit" id="repGo">Post report</button></div>
+        </form>
+        <p class="small muted">Flow, water temp and sky from the gauge and forecast are attached automatically.</p>
+      </div>
+      <div class="row">
+        <label class="f" for="feedRiver">Water<select id="feedRiver"></select></label>
+        <label class="f" for="feedType">Show<select id="feedType"><option value="">Reports and catches</option><option value="report">Reports</option><option value="catch">Catches</option></select></label>
+        <button class="btn ghost" id="feedRefresh" type="button" style="align-self:end">Refresh</button>
+      </div>
+      <div id="feed" class="stack"></div>
+      <p class="small muted">Signed in as <span id="crewName2"></span>. <a href="#crew" id="crewLeave">Switch person</a></p>
     </div>
   </section>
 
@@ -232,10 +271,12 @@ details summary{cursor:pointer;font-weight:600}
         <label class="f" for="lgCfs">Flow (CFS)<input id="lgCfs" type="number" placeholder="From gauge"></label>
         <label class="f" for="lgWt">Water temp (°F)<input id="lgWt" type="number" placeholder="From gauge"></label>
         <label class="f" for="lgNotes" style="grid-column:1/-1">Notes<textarea id="lgNotes" rows="2" placeholder="Tailout below the riffle, fish rising to cripples"></textarea></label>
-        <div class="row"><button class="btn" type="submit">Save catch</button><span class="small muted" id="logStore"></span></div>
+        <label class="f hidden crewOnly" for="lgPhoto">Photo (optional)<input id="lgPhoto" type="file" accept="image/*"></label>
+        <div class="row"><button class="btn" type="submit" id="logGo">Save catch</button><span class="small muted" id="logStore"></span></div>
       </form>
       <datalist id="flyNames"></datalist>
     </div>
+    <div class="row hidden crewOnly"><label class="f" for="logScope">Show<select id="logScope"><option value="all">The whole crew</option><option value="me">Just me</option></select></label></div>
     <div class="cols" id="logStats"></div>
     <div class="card stack">
       <div class="row"><h3>Entries</h3><button class="btn ghost" id="copyCsv" type="button">Copy as CSV</button></div>
@@ -305,7 +346,8 @@ const BUGS={
   terrestrial:{name:"Terrestrials",group:"Land insects",sizes:"8–18",look:"Hoppers, ants and beetles blown onto the water in late summer.",warm:true},
   scud:{name:"Scud",group:"Crustacean",sizes:"14–18",look:"Small curled freshwater shrimp, common in weedy tailwaters.",warm:false},
   sculpin:{name:"Sculpin and baitfish",group:"Baitfish",sizes:"2–8",look:"Bottom-hugging fish that big trout hunt, best in low light and higher water.",warm:false},
-  leech:{name:"Leech",group:"Leech",sizes:"8–12",look:"Ribbon-swimming leech, common in slow and still water.",warm:false}
+  leech:{name:"Leech",group:"Leech",sizes:"8–12",look:"Ribbon-swimming leech, common in slow and still water.",warm:false},
+  damsel:{name:"Damselfly",group:"Damselfly",sizes:"10–12",look:"Slim olive nymphs swim to the weeds and shore to hatch in early summer. Adults are bright blue.",warm:true}
 };
 const FLIES=[
  ["Parachute Adams","Dry","12–20",["bwo","callibaetis","midge"],"The one dry to carry everywhere."],
@@ -343,7 +385,10 @@ const FLIES=[
  ["Sculpzilla","Streamer","4–6",["sculpin"],"Bounces the bottom for big browns."],
  ["Slumpbuster","Streamer","6",["sculpin","leech"],"Pulsing rabbit fur in low light."],
  ["Balanced Leech","Nymph","10–12",["leech"],"Hangs level under an indicator in still water."],
- ["Sparkle Minnow","Streamer","6",["sculpin"],"Flash for off-color water."]
+ ["Sparkle Minnow","Streamer","6",["sculpin"],"Flash for off-color water."],
+ ["Chironomid","Nymph","14–18",["midge"],"Stillwater staple. Hang it a foot off the bottom under an indicator."],
+ ["Damsel Nymph","Nymph","10–12",["damsel"],"Slow hand-twist retrieve toward the weeds."],
+ ["Callibaetis Nymph","Nymph","14–16",["callibaetis"],"Slow strip over weed beds before the hatch."]
 ].map(([name,type,sizes,bugs,tip])=>({name,type,sizes,bugs,tip}));
 
 const R=(id,o)=>({id,region:"Central & Southern Oregon",...o});
@@ -404,6 +449,30 @@ const BASE_RIVERS=[
   regs:"Wild trout are catch and release on much of the river. Rules change by section.",
   shops:["The Caddis Fly Angling Shop (Eugene)"],
   hatches:{marchbrown:[0,1,3,3,1,0,0,0,0,0,0,0],bwo:[1,2,3,2,1,0,0,0,1,2,2,1],caddis:[0,0,1,2,3,3,2,2,1,1,0,0],golden:[0,0,0,0,2,3,2,0,0,0,0,0],pmd:[0,0,0,0,1,2,2,2,1,0,0,0],octcaddis:[0,0,0,0,0,0,0,0,2,3,2,0],terrestrial:[0,0,0,0,0,1,2,3,2,0,0,0],midge:[2,2,1,1,0,0,0,0,0,1,1,2]}}),
+ R("hosmer",{name:"Hosmer Lake",section:"Cascade Lakes",gauge:null,lat:43.96,lon:-121.78,type:"lake",lake:true,offMonths:[0,1,2,3,10,11],
+  flow:{},species:["Atlantic salmon","Brook trout"],
+  about:"Shallow, gin-clear lake below Mt. Bachelor with cruising Atlantic salmon and big brook trout. Sight-fishing from a canoe or float tube, and very technical.",
+  access:["Boat launch at the south end","The Cascade Lakes Highway past Mt. Bachelor usually closes in winter. Check road status before you go"],
+  floats:["Paddle the channel between the lower and upper lake"],
+  regs:"Fly fishing only with barbless hooks. Catch and release. Check motor restrictions.",
+  shops:["Fly & Field Outfitters (Bend)","Confluence Fly Shop (Bend)"],
+  hatches:{midge:[0,0,0,0,2,3,2,2,2,1,0,0],callibaetis:[0,0,0,0,1,3,3,3,2,0,0,0],damsel:[0,0,0,0,0,3,3,2,0,0,0,0],leech:[0,0,0,0,2,2,2,2,2,2,0,0],terrestrial:[0,0,0,0,0,0,1,2,1,0,0,0]}}),
+ R("crane-prairie",{name:"Crane Prairie",section:"Cascade Lakes",gauge:null,lat:43.80,lon:-121.78,type:"lake",lake:true,offMonths:[0,1,2,3,10,11],
+  flow:{},species:["Redband rainbow","Brook trout","Kokanee"],
+  about:"Big, shallow reservoir known for heavy rainbows that cruise the old river channels. Chironomid fishing under an indicator is the main event.",
+  access:["Several campgrounds and boat ramps around the lake","Road access closes for winter. Check opening day and road status"],
+  floats:[],
+  regs:"Season, limits and bait rules change, so read the current rules before you keep a fish.",
+  shops:["Fly & Field Outfitters (Bend)","Confluence Fly Shop (Bend)"],
+  hatches:{midge:[0,0,0,0,3,3,3,2,2,2,0,0],callibaetis:[0,0,0,0,1,2,3,3,2,0,0,0],damsel:[0,0,0,0,1,3,2,1,0,0,0,0],leech:[0,0,0,0,2,2,2,2,2,2,0,0],scud:[0,0,0,0,2,2,2,2,2,2,0,0]}}),
+ R("east-lake",{name:"East Lake",section:"Newberry Crater",gauge:null,lat:43.72,lon:-121.21,type:"lake",lake:true,offMonths:[0,1,2,3,10,11],
+  flow:{},species:["Brown trout","Redband rainbow","Kokanee"],
+  about:"Caldera lake inside Newberry Crater with big brown trout along the shoreline shelves. Chironomids, callibaetis and leeches.",
+  access:["Campgrounds and boat ramps on the south and east shores","Snow blocks the road until late spring"],
+  floats:[],
+  regs:"Check season dates and bag limits for brown trout and kokanee.",
+  shops:["Fly & Field Outfitters (Bend)","Confluence Fly Shop (Bend)"],
+  hatches:{midge:[0,0,0,0,3,3,2,2,2,1,0,0],callibaetis:[0,0,0,0,0,2,3,3,2,0,0,0],damsel:[0,0,0,0,0,2,2,1,0,0,0,0],leech:[0,0,0,0,2,2,2,2,2,2,0,0],sculpin:[0,0,0,0,2,1,1,1,2,2,0,0]}}),
  R("williamson",{name:"Williamson",section:"Below the Sprague",gauge:"11502500",gaugeName:"Williamson R below Sprague R near Chiloquin",lat:42.57,lon:-121.86,type:"spring",
   flow:{lo:280,idealLo:400,idealHi:900,hi:1400},species:["Redband rainbow"],
   about:"Slow, deep and spring-influenced, with huge redbands that run up from Klamath Lake in summer. Known for the Hex hatch at dusk.",
@@ -417,11 +486,11 @@ const TEMPLATE_HATCH={
   freestone:{bwo:[1,1,2,3,2,0,0,0,1,2,2,1],midge:[3,3,2,1,0,0,0,0,0,1,2,3],salmonfly:[0,0,0,0,2,3,1,0,0,0,0,0],golden:[0,0,0,0,1,3,2,0,0,0,0,0],pmd:[0,0,0,0,1,2,3,2,1,0,0,0],caddis:[0,0,1,2,3,3,3,2,2,1,0,0],terrestrial:[0,0,0,0,0,1,2,3,2,0,0,0],sculpin:[2,2,2,2,2,1,1,1,2,2,2,2]},
   tailwater:{midge:[3,3,3,2,1,1,1,1,1,2,3,3],bwo:[2,2,3,3,2,0,0,0,1,3,3,2],pmd:[0,0,0,0,2,3,3,2,1,0,0,0],caddis:[0,0,0,1,2,3,3,3,2,1,0,0],scud:[2,2,2,2,2,2,2,2,2,2,2,2],sculpin:[2,2,2,2,1,1,1,1,1,2,2,2]},
   spring:{bwo:[2,2,3,3,2,1,1,1,2,3,3,2],midge:[2,2,2,2,1,1,1,1,1,1,2,2],pmd:[0,0,0,1,2,3,3,3,2,1,0,0],caddis:[0,0,0,1,2,3,3,2,1,0,0,0],scud:[2,2,2,2,2,2,2,2,2,2,2,2],terrestrial:[0,0,0,0,0,1,2,3,2,0,0,0]},
-  lake:{midge:[1,1,2,3,3,2,2,2,2,2,1,1],callibaetis:[0,0,0,0,1,2,3,3,2,0,0,0],leech:[1,1,2,2,2,2,2,2,2,2,2,1],scud:[1,1,2,2,2,2,2,2,2,2,2,1],sculpin:[1,1,1,2,2,1,1,1,2,2,2,1]}
+  lake:{midge:[1,1,2,3,3,2,2,2,2,2,1,1],callibaetis:[0,0,0,0,1,2,3,3,2,0,0,0],damsel:[0,0,0,0,1,3,3,2,0,0,0,0],leech:[1,1,2,2,2,2,2,2,2,2,2,1],scud:[1,1,2,2,2,2,2,2,2,2,2,1],sculpin:[1,1,1,2,2,1,1,1,2,2,2,1]}
 };
 let RIVERS=[];
 function loadRivers(){
-  const custom=store.get("custom",[]).map(c=>({...c,custom:true,region:"Your rivers",species:["Trout"],access:[],floats:[],shops:[],
+  const custom=store.get("custom",[]).map(c=>({...c,custom:true,lake:c.type==="lake",region:"Your rivers",species:["Trout"],access:[],floats:[],shops:[],
     about:"A river you added from its USGS gauge. The hatch chart is a general template for "+c.type+" water.",regs:"Check your state's current fishing regulations.",
     flow:{lo:c.idealLo?c.idealLo*0.7:null,idealLo:c.idealLo||null,idealHi:c.idealHi||null,hi:c.idealHi?c.idealHi*1.4:null},hatches:TEMPLATE_HATCH[c.type]||TEMPLATE_HATCH.freestone}));
   RIVERS=[...BASE_RIVERS,...custom];
@@ -515,7 +584,10 @@ function conditions(r){
   return {cfs,wtF,sky,airF:cur?.temperature_2m??null,wind:cur?.wind_speed_10m??null,gust:cur?.wind_gusts_10m??null,pressure:cur?.surface_pressure??null,
     source:{flow:c.cfs!=null?"live":(cfs!=null?"manual":null),temp:c.wtF!=null?"live":(wtF!=null?"manual":null)},wx:c.wx||null,time:c.time};
 }
+const offSeason=(r,m=new Date().getMonth())=>!!(r.offMonths&&r.offMonths.includes(m));
 function rateFlow(r,cfs){
+  if(offSeason(r))return {k:"warn",label:"Closed or snowed in"};
+  if(r.lake&&r.flow?.idealLo==null)return {k:"na",label:"Stillwater"};
   const f=r.flow||{};
   if(cfs==null||f.idealLo==null)return {k:"na",label:cfs==null?"No reading":"No range set"};
   if(cfs<f.lo)return {k:"warn",label:"Very low"};
@@ -569,7 +641,8 @@ function recommend(r,ctx){
   if(nymphs.length<3){for(const n of ["Pheasant Tail","Zebra Midge","Perdigon"]){const f=FLIES.find(x=>x.name===n);if(!nymphs.find(c=>c.f===f)&&nymphs.length<3)nymphs.push({f,b:"",s:0})}}
   const lead=top[0]?.b;const leadS=top[0]?.s||0;
   let rig,why;
-  if(ctx.wtF!=null&&ctx.wtF>=68){rig="Don't fish for trout";why="Water is 68°F or warmer. Trout get stressed and often die after release. Fish at dawn somewhere colder, or try warm-water species."}
+  if(r.lake&&!(ctx.wtF!=null&&ctx.wtF>=68)){rig=lead==="callibaetis"&&ctx.time!=="evening"&&leadS>=2.5?"Callibaetis dries, nymphs before the hatch":"Indicator chironomid or slow strip";why="On stillwater, hang a chironomid or balanced leech under an indicator, a foot off the bottom in 8 to 15 ft of water. Or slow-strip a damsel or leech along the weed edges. Watch for callibaetis late in the morning in summer."}
+  else if(ctx.wtF!=null&&ctx.wtF>=68){rig="Don't fish for trout";why="Water is 68°F or warmer. Trout get stressed and often die after release. Fish at dawn somewhere colder, or try warm-water species."}
   else if(ctx.flowK==="high"){rig="Indicator nymph or streamer";why="High water pushes fish to the soft edges. Go big and heavy: a rubber legs or stone nymph under an indicator, or strip a streamer along the banks."}
   else if(ctx.wtF!=null&&ctx.wtF<42){rig="Euro nymph or indicator";why="Cold water slows trout down. Fish slow, deep water at midday with small nymphs right on the bottom."}
   else if(["salmonfly","golden","terrestrial"].includes(lead)&&leadS>=2){rig="Dry-dropper";why="Big bugs are out. A foam dry floats a nymph and covers both levels."}
@@ -583,6 +656,7 @@ function riverScore(r,ctx){
   const rf=rateFlow(r,ctx.cfs);let m={good:1,warn:0.6,bad:0.15,na:0.85}[rf.k];
   if(ctx.wtF!=null&&ctx.wtF>=68)m*=0.15;
   if(ctx.wind!=null&&ctx.wind>18)m*=0.8;
+  if(offSeason(r,ctx.month))m*=0.05;
   return sc*m;
 }
 function timeOfDay(){const h=new Date().getHours();return h<11?"morning":h>=17?"evening":"midday"}
@@ -632,6 +706,7 @@ function renderToday(){
   $("#regionFlyNote").textContent="These patterns show up most across the five best-ranked rivers today.";
   $("#regionFlies").innerHTML=tops.map(f=>flyRow({f})).join("");
   bindCards("#todayGrid");
+  renderWeekend(ranked.map(x=>x.r));
 }
 function riverCard(r,c,rec,rank){
   const rf=rateFlow(r,c.cfs);const rt=rateTemp(c.wtF);
@@ -648,6 +723,7 @@ function riverCard(r,c,rec,rank){
       <div><b>${c.airF==null?"—":fmt(c.airF)+"°"}</b><span>Air${c.wind!=null?" · "+fmt(c.wind)+" mph":""}</span></div>
     </div>
     ${rt&&rt.k==="bad"?pill(rt):""}
+    ${crewChip(r)}
     <div class="small">${rec.top.slice(0,3).map(t=>`<span class="chip">${esc(BUGS[t.b].name)}</span>`).join("")||'<span class="muted">Nymph it. No hatches on the calendar.</span>'}</div>
     <div class="small muted">Tie on: ${esc([rec.dries[0],rec.nymphs[0]].filter(Boolean).map(x=>x.f.name+" #"+x.f.sizes).join(", "))}</div>
   </div>`;
@@ -679,8 +755,8 @@ async function renderRiver(id){
       </div>
       ${rateTemp(c.wtF)?pill(rateTemp(c.wtF)):""}
       <div id="spark" class="small muted">${r.gauge?"Loading the 7-day flow…":""}</div>
-      <div class="small muted">Gauge: ${esc(r.gaugeName||"USGS "+r.gauge)} (<span class="num">${esc(r.gauge)}</span>). ${r.flow.idealLo!=null?`Fishable range about <span class="num">${fmt(r.flow.idealLo)}–${fmt(r.flow.idealHi)}</span> CFS.`:""} ${c.time?"Reading from "+new Date(c.time).toLocaleString():""}</div>
-      <details ${c.source.flow==="live"?"":"open"}><summary>Enter your own reading</summary>
+      <div class="small muted">${r.gauge?`Gauge: ${esc(r.gaugeName||"USGS "+r.gauge)} (<span class="num">${esc(r.gauge)}</span>).`:"Lakes have no flow gauge."} ${r.flow.idealLo!=null?`Fishable range about <span class="num">${fmt(r.flow.idealLo)}–${fmt(r.flow.idealHi)}</span> CFS.`:""} ${c.time?"Reading from "+new Date(c.time).toLocaleString():""}</div>
+      <details ${c.source.flow==="live"||r.lake?"":"open"}><summary>Enter your own reading</summary>
         <form class="form" id="manForm" style="margin-top:8px">
           <label class="f" for="mCfs">Flow (CFS)<input id="mCfs" type="number" value="${esc(m.cfs??"")}"></label>
           <label class="f" for="mWt">Water temp (°F)<input id="mWt" type="number" value="${esc(m.wtF??"")}"></label>
@@ -693,10 +769,11 @@ async function renderRiver(id){
     <div class="card stack">
       <h3>Weather</h3>
       ${wx?`<div class="scroll"><table><tr><th>Day</th><th>High/Low</th><th>Rain</th><th>Wind</th></tr>${wx.time.map((d,i)=>`<tr><td>${new Date(d+"T12:00").toLocaleDateString(undefined,{weekday:"short"})}</td><td class="num">${fmt(wx.temperature_2m_max[i])}° / ${fmt(wx.temperature_2m_min[i])}°</td><td class="num">${fmt(wx.precipitation_probability_max[i])}%</td><td class="num">${fmt(wx.wind_speed_10m_max[i])} mph</td></tr>`).join("")}</table></div>`:`<p class="muted small">The forecast loads when Driftline runs on a regular web host.</p>`}
-      <div class="small"><a href="https://www.google.com/maps/search/?api=1&query=${r.lat},${r.lon}" target="_blank" rel="noopener">Open in Google Maps</a> · <a href="https://waterdata.usgs.gov/monitoring-location/USGS-${esc(r.gauge)}/" target="_blank" rel="noopener">USGS gauge page</a></div>
+      <div class="small"><a href="https://www.google.com/maps/search/?api=1&query=${r.lat},${r.lon}" target="_blank" rel="noopener">Open in Google Maps</a>${r.gauge?` · <a href="https://waterdata.usgs.gov/monitoring-location/USGS-${esc(r.gauge)}/" target="_blank" rel="noopener">USGS gauge page</a>`:""}</div>
     </div>
    </div>
    ${recBlock(r,rec)}
+   ${crewMode()?`<div class="card stack"><div class="row" style="justify-content:space-between"><h3>Crew on this water</h3><a class="small" href="#crew">Post a report</a></div>${(()=>{const it=crewItemsFor(r.id,120).slice(0,5);return it.length?it.map(feedItem).join(""):'<p class="small muted">Nobody in the crew has posted here in the last four months.</p>'})()}</div>`:""}
    <div class="card scroll"><h3>Hatch chart</h3>${heatTable(r)}</div>
    <div class="cols">
      <div class="card stack"><h3>Access</h3>${r.access.length?`<ul>${r.access.map(a=>`<li>${esc(a)}</li>`).join("")}</ul>`:'<p class="muted small">Add your own access notes in the catch log.</p>'}
@@ -706,6 +783,7 @@ async function renderRiver(id){
      <div class="card stack"><h3>Fly shops</h3>${r.shops.length?`<ul>${r.shops.map(s=>`<li>${esc(s)}</li>`).join("")}</ul><p class="small muted">Call ahead for the latest report and hours.</p>`:'<p class="muted small">No shops listed yet.</p>'}
        ${r.custom?`<button class="btn ghost" id="rmRiver" type="button">Remove this river</button>`:""}</div>
    </div>`;
+  bindDel("#v-river");
   $("#manForm").onsubmit=e=>{e.preventDefault();setManual(r.id,{cfs:$("#mCfs").value,wtF:$("#mWt").value,sky:$("#mSky").value});toast("Reading saved");renderRiver(id)};
   const rm=$("#rmRiver");if(rm)rm.onclick=()=>{store.set("custom",store.get("custom",[]).filter(x=>x.id!==r.id));loadRivers();fillSelects();location.hash="rivers"};
   if(r.gauge){
@@ -809,7 +887,7 @@ const CHAT=[];
 function contextBlob(){
   const mo=new Date().getMonth();
   return RIVERS.map(r=>{const c=conditions(r);const h=Object.entries(r.hatches).filter(([,a])=>a[mo]).map(([b,a])=>BUGS[b].name+"("+a[mo]+")").join(", ");
-    return `- ${rLabel(r)}: flow ${c.cfs??"unknown"} CFS (fishable ${r.flow.idealLo??"?"}-${r.flow.idealHi??"?"}), water ${c.wtF!=null?Math.round(c.wtF)+"F":"unknown"}, sky ${c.sky??"unknown"}; hatches now: ${h||"none listed"}; regs: ${r.regs}`}).join("\n");
+    return `- ${rLabel(r)}${r.lake?" (lake)":""}${offSeason(r)?" [usually closed or snowed in this month]":""}: flow ${c.cfs??"unknown"} CFS (fishable ${r.flow.idealLo??"?"}-${r.flow.idealHi??"?"}), water ${c.wtF!=null?Math.round(c.wtF)+"F":"unknown"}, sky ${c.sky??"unknown"}; hatches now: ${h||"none listed"}; regs: ${r.regs}`}).join("\n")+crewContext();
 }
 function renderChat(){
   const box=$("#chat");
@@ -819,7 +897,7 @@ function renderChat(){
 async function askGuide(q){
   if(!SAMPLE||!q.trim())return;
   CHAT.push({role:"user",content:q});CHAT.push({role:"assistant",content:"Thinking…"});renderChat();
-  const sys=`You are a veteran fly fishing guide in Central Oregon who also knows rivers across the US. Be practical and concise: short paragraphs or a short list, specific flies with hook sizes, tippet, and where in the water to fish. Mention safety or fish-care issues when they apply (water over 68F, high water, wading). Remind the angler to check current regulations when rules matter. No markdown headers.
+  const sys=`You are a veteran fly fishing guide in Central Oregon who also knows rivers across the US. Be practical and concise: short paragraphs or a short list, specific flies with hook sizes, tippet, and where in the water to fish. Mention safety or fish-care issues when they apply (water over 68F, high water, wading). Remind the angler to check current regulations when rules matter. When the crew's recent reports are relevant, use them and mention who posted. No markdown headers.
 Today is ${new Date().toDateString()}. Current Driftline data:
 ${contextBlob()}`;
   const msgs=CHAT.slice(0,-1).map((m,i)=>i===0?{role:"user",content:sys+"\n\nAngler's question: "+m.content}:m);
@@ -838,6 +916,7 @@ function moonPhase(d){const syn=29.530588853;const ref=Date.UTC(2000,0,6,18,14);
 function tempBand(t){if(t==null||t==="")return "Unknown";t=+t;return t<45?"Under 45°F":t<52?"45–51°F":t<60?"52–59°F":t<68?"60–67°F":"68°F+"}
 async function saveCatch(e){
   e.preventDefault();
+  if(crewMode())return saveCrewCatch();
   const r=riverById($("#lgRiver").value);const c=r?conditions(r):{};
   const entry={date:$("#lgDate").value,river:r?rLabel(r):"",riverId:r?.id||"",species:$("#lgSpecies").value,length:$("#lgLen").value?+$("#lgLen").value:null,fly:$("#lgFly").value.trim(),
     sky:$("#lgSky").value||c.sky||"",cfs:$("#lgCfs").value?+$("#lgCfs").value:c.cfs??null,wtF:$("#lgWt").value?+$("#lgWt").value:(c.wtF!=null?Math.round(c.wtF):null),
@@ -859,8 +938,13 @@ const EXAMPLES=[
  {id:"ex2",date:"2026-05-24",river:"Lower Deschutes · Warm Springs to Trout Creek",species:"Redband rainbow",length:18,fly:"Clark's Stonefly #6",sky:"partly",cfs:4400,wtF:54,moon:"Full moon",notes:"Example entry"},
  {id:"ex3",date:"2026-11-02",river:"Crooked River · Below Bowman Dam",species:"Whitefish",length:13,fly:"Zebra Midge #20",sky:"overcast",cfs:95,wtF:44,moon:"Waning crescent",notes:"Example entry"}
 ];
+function logRows(){
+  if(crewMode()){const me=CREW.name.toLowerCase();return CREW.items.filter(i=>i.type==="catch"&&($("#logScope").value!=="me"||i.angler.toLowerCase()===me))}
+  return CATCHES;
+}
 function renderLog(){
-  const real=CATCHES.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  const real=logRows().slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.created||0)-(a.created||0));
+  const crew=crewMode();
   const rows=real.length?real:EXAMPLES;const ex=!real.length;
   const count=(f)=>{const t={};rows.forEach(r=>{const k=f(r)||"Unknown";t[k]=(t[k]||0)+1});return Object.entries(t).sort((a,b)=>b[1]-a[1])};
   const barList=(title,arr)=>{const mx=Math.max(1,...arr.map(a=>a[1]));return `<div class="card stack"><h3>${title}</h3><div class="bars">${arr.slice(0,6).map(([k,v])=>`<div class="bar"><span>${esc(k)}</span><i style="width:${(v/mx*100).toFixed(0)}%"></i><span class="num">${v}</span></div>`).join("")}</div></div>`};
@@ -870,12 +954,14 @@ function renderLog(){
   $("#logStats").innerHTML=`<div class="card stack"><h3>${ex?"Season so far (examples)":"Season so far"}</h3>
      <div class="readout"><div><b>${rows.length}</b><span>Fish</span></div><div><b>${lens.length?(lens.reduce((a,b)=>a+b,0)/lens.length).toFixed(1)+'"':"—"}</b><span>Avg length</span></div><div><b>${big?big.length+'"':"—"}</b><span>Biggest</span></div></div>
      <p class="small">${esc(pattern)}</p>${ex?'<p class="small muted">These are example entries. They disappear when you log your first fish.</p>':""}</div>`+
-     barList("By river",count(r=>r.river.split(" · ")[0]))+barList("Top flies",count(r=>r.fly))+barList("By sky",sky)+barList("By water temp",tb)+barList("By moon",count(r=>r.moon));
-  $("#logTable").innerHTML=`<tr><th>Date</th><th>River</th><th>Fish</th><th>Fly</th><th>Conditions</th><th></th></tr>`+rows.map(r=>`<tr><td class="num">${esc(r.date)}</td><td>${esc(r.river)}</td><td>${esc(r.species)}${r.length?` <span class="num">${r.length}"</span>`:""}</td><td>${esc(r.fly)}</td><td class="small">${[r.cfs!=null?fmt(r.cfs)+" CFS":"",r.wtF!=null?r.wtF+"°F water":"",skyWord[r.sky]||"",r.moon||""].filter(Boolean).map(esc).join(" · ")}${r.notes&&!ex?`<div class="muted">${esc(r.notes)}</div>`:""}</td><td>${ex?"":`<button class="btn ghost small" data-del="${esc(r.id)}" type="button">Delete</button>`}</td></tr>`).join("");
+     (crew?barList("By angler",count(r=>r.angler)):"")+barList("By river",count(r=>r.river.split(" · ")[0]))+barList("Top flies",count(r=>r.fly))+barList("By sky",sky)+barList("By water temp",tb)+barList("By moon",count(r=>r.moon));
+  $("#logTable").innerHTML=`<tr><th>Date</th>${crew?"<th>Angler</th>":""}<th>River</th><th>Fish</th><th>Fly</th><th>Conditions</th><th></th></tr>`+rows.map(r=>`<tr><td class="num">${esc(r.date)}</td>${crew?`<td>${esc(r.angler)}</td>`:""}<td>${esc(r.river)}</td><td>${esc(r.species)}${r.length?` <span class="num">${r.length}"</span>`:""}</td><td>${esc(r.fly)}</td><td class="small">${[r.cfs!=null?fmt(r.cfs)+" CFS":"",r.wtF!=null?r.wtF+"°F water":"",skyWord[r.sky]||"",r.moon||""].filter(Boolean).map(esc).join(" · ")}${r.notes&&!ex?`<div class="muted">${esc(r.notes)}</div>`:""}</td><td>${ex?"":crew?(r.angler.toLowerCase()===CREW.name.toLowerCase()?`<button class="btn ghost small" data-crewdel="${esc(r.id)}" type="button">Delete</button>`:""):`<button class="btn ghost small" data-del="${esc(r.id)}" type="button">Delete</button>`}</td></tr>`).join("");
   $$("[data-del]").forEach(b=>b.onclick=()=>deleteCatch(b.dataset.del));
+  bindDel("#logTable");
+  if(crew)$("#logStore").textContent="Shared with the crew.";
 }
 function csv(){const cols=["date","river","species","length","fly","sky","cfs","wtF","airF","pressure","moon","notes"];
-  return [cols.join(",")].concat(CATCHES.map(c=>cols.map(k=>`"${String(c[k]??"").replace(/"/g,'""')}"`).join(","))).join("\n")}
+  return ["angler,"+cols.join(",")].concat(logRows().map(c=>`"${String(c.angler??"").replace(/"/g,'""')}",`+cols.map(k=>`"${String(c[k]??"").replace(/"/g,'""')}"`).join(","))).join("\n")}
 async function initStorage(){
   CATCHES=store.get("catches",[]);
   $("#logStore").textContent="Saved on this device.";
@@ -1029,16 +1115,18 @@ function renderMap(){
 /* ---------- routing & init ---------- */
 function fillSelects(){
   const opts=RIVERS.map(r=>`<option value="${esc(r.id)}">${esc(rLabel(r))}</option>`).join("");
-  for(const id of ["hatchRiver","rfRiver","bugRiver","lgRiver","tpRiver"]){const s=$("#"+id);const v=s.value;s.innerHTML=opts;if(v&&riverById(v))s.value=v}
+  const fr=$("#feedRiver"),fv=fr.value;fr.innerHTML=`<option value="">All waters</option>`+opts;if(fv)fr.value=fv;
+  for(const id of ["hatchRiver","rfRiver","bugRiver","lgRiver","tpRiver","repRiver"]){const s=$("#"+id);const v=s.value;s.innerHTML=opts;if(v&&riverById(v))s.value=v}
   $("#flyNames").innerHTML=FLIES.map(f=>`<option value="${esc(f.name)} #${esc(f.sizes.split("–")[0])}">`).join("");
 }
-const VIEWS=["today","rivers","hatches","flies","bugid","guide","log","trip","learn","map"];
+const VIEWS=["today","crew","rivers","hatches","flies","bugid","guide","log","trip","learn","map"];
 function route(){
   let h=(location.hash||"#today").slice(1);
   let view=h.startsWith("river-")?"river":(VIEWS.includes(h)?h:"today");
   $$(".view").forEach(v=>v.classList.toggle("on",v.id==="v-"+view));
   $$("#tabs a").forEach(a=>a.setAttribute("aria-current",a.getAttribute("href")==="#"+(view==="river"?"rivers":view)?"page":"false"));
   if(view==="today")renderToday();
+  if(view==="crew"){syncCrewChrome();renderFeed()}
   if(view==="rivers")renderRivers();
   if(view==="river")renderRiver(h.slice(6));
   if(view==="hatches")renderHatches();
@@ -1058,6 +1146,149 @@ function updateBadge(){
     n.classList.remove("hidden");
     n.innerHTML=`Live USGS flows and weather couldn't load here. This page's host blocks outside data, or you're offline. Recommendations use the hatch calendar, and you can enter flows and temps by hand on any river page. When Driftline runs on a normal web host, the readings fill in on their own.`}
 }
+async function shrinkImage(file,max=1280,q=0.85){
+  const url=URL.createObjectURL(file);
+  try{
+    const img=await new Promise((ok,bad)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=bad;i.src=url});
+    const s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));
+    const cv=document.createElement("canvas");cv.width=Math.round(img.naturalWidth*s);cv.height=Math.round(img.naturalHeight*s);
+    cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);
+    return {b64:cv.toDataURL("image/jpeg",q).split(",")[1],type:"image/jpeg"};
+  }finally{URL.revokeObjectURL(url)}
+}
+function hostedSample(){
+  const H=()=>({"content-type":"application/json","x-crew-code":CREW.code});
+  const call=async(input,opts={})=>{
+    const messages=typeof input==="string"?[{role:"user",content:input}]:input;
+    const r=await fetch("/api/ai",{method:"POST",headers:H(),body:JSON.stringify({messages}),signal:opts.signal});
+    if(r.status===429)throw {code:"rate_limited"};if(!r.ok||!r.body)throw {code:"error"};
+    const rd=r.body.getReader();const dec=new TextDecoder();let text="";
+    for(;;){const {done,value}=await rd.read();if(done)break;const delta=dec.decode(value,{stream:true});text+=delta;if(opts.onText)opts.onText({text,delta})}
+    return {text,truncated:false};
+  };
+  call.json=async(prompt,opts={})=>{
+    let image,mediaType;if(opts.images&&opts.images[0]){const s=await shrinkImage(opts.images[0]);image=s.b64;mediaType=s.type}
+    const r=await fetch("/api/ai?mode=json",{method:"POST",headers:H(),body:JSON.stringify({prompt,image,mediaType})});
+    if(r.status===429)throw {code:"rate_limited"};const j=await r.json().catch(()=>({error:1}));if(!r.ok||j.error)throw {code:"error"};return j;
+  };
+  call.limits=async()=>({images:true});
+  return call;
+}
+
+/* ---------- CREW ---------- */
+const CREW={ok:false,needsCode:false,authed:false,items:[],loaded:false,name:store.get("crewName",""),code:store.get("crewCode","")};
+const RATING=["","Slow","Fair","Good","Great","Epic"];
+function crewMode(){return CREW.ok&&CREW.authed&&!!CREW.name}
+async function crewApi(qs="",opts={}){
+  const r=await fetch("/api/crew"+qs,{...opts,headers:{"content-type":"application/json","x-crew-code":CREW.code}});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw {status:r.status,message:j.error||"That didn't work. Try again."};
+  return j;
+}
+async function pingCrew(){
+  if(!location.protocol.startsWith("http"))return;
+  try{const r=await fetch("/api/crew?ping=1",{headers:{"x-crew-code":CREW.code}});if(!r.ok)return;const j=await r.json();CREW.ok=!!j.ok;CREW.needsCode=!!j.needsCode;CREW.authed=!!j.authed}catch(e){}
+}
+async function loadCrew(){
+  if(!crewMode())return;
+  try{const j=await crewApi("");CREW.items=j.items||[];CREW.loaded=true}catch(e){if(e.status===401)CREW.authed=false}
+  syncCrewChrome();
+}
+function crewItemsFor(riverId,days=60){const cut=Date.now()-days*864e5;return CREW.items.filter(i=>i.riverId===riverId&&(i.created||0)>=cut)}
+function crewChip(r){
+  if(!crewMode())return "";const it=crewItemsFor(r.id,7);if(!it.length)return "";
+  const rep=it.find(i=>i.type==="report"&&i.rating);
+  return `<div class="small"><span class="chip">Crew: ${it.length} post${it.length>1?"s":""} this week${rep?" · "+esc(rep.angler)+" says "+RATING[rep.rating].toLowerCase():""}</span></div>`;
+}
+function crewContext(){
+  if(!crewMode()||!CREW.items.length)return "";
+  return "\n\nRecent crew reports and catches (newest first):\n"+CREW.items.slice(0,25).map(i=>("- "+(i.date||"")+" "+i.angler+" on "+i.river+": "+(i.type==="report"?"fished "+(RATING[i.rating]||"").toLowerCase():"caught "+(i.length?i.length+'" ':"")+(i.species||"fish"))+(i.flies||i.fly?"; flies: "+(i.flies||i.fly):"")+(i.cfs!=null?"; "+i.cfs+" CFS":"")+(i.wtF!=null?"; water "+i.wtF+"F":"")+(i.notes?"; "+i.notes:"")).slice(0,320)).join("\n");
+}
+function syncCrewChrome(){
+  const on=crewMode();
+  $$(".crewOnly").forEach(e=>e.classList.toggle("hidden",!on));
+  $("#crewOff").classList.toggle("hidden",CREW.ok);
+  $("#crewJoin").classList.toggle("hidden",!CREW.ok||on);
+  $("#crewMain").classList.toggle("hidden",!on);
+  $("#crewWho").textContent=on?"Posting as "+CREW.name:"";$("#crewName2").textContent=CREW.name;
+  const b=$("#crewBadge");b.classList.toggle("hidden",!on);b.textContent=on?"Crew · "+CREW.name:"";
+  if(!$("#jName").value)$("#jName").value=CREW.name;
+}
+function feedItem(i){
+  const mine=CREW.name&&String(i.angler).toLowerCase()===CREW.name.toLowerCase();
+  const cond=[i.cfs!=null?fmt(i.cfs)+" CFS":"",i.wtF!=null?i.wtF+"°F water":"",skyWord[i.sky]||""].filter(Boolean).join(" · ");
+  const head=i.type==="report"?`<b>${esc(i.angler)}</b> fished <a href="#river-${esc(i.riverId)}">${esc(i.river)}</a>`:`<b>${esc(i.angler)}</b> caught ${i.length?`a <b class="num">${esc(i.length)}"</b> `:"a "}${esc(String(i.species||"fish").toLowerCase())} on <a href="#river-${esc(i.riverId)}">${esc(i.river)}</a>`;
+  const rk=i.rating>=3?"good":i.rating===2?"warn":"bad";
+  return `<div class="card stack"><div class="row" style="justify-content:space-between"><div>${head}</div><span class="small muted num">${esc(i.date||"")}</span></div>
+   ${i.type==="report"&&i.rating?`<div>${pill({k:rk,label:RATING[i.rating]})}</div>`:""}
+   ${i.flies||i.fly?`<div class="small"><b>Flies:</b> ${esc(i.flies||i.fly)}</div>`:""}
+   ${i.notes?`<div class="small" style="white-space:pre-wrap">${esc(i.notes)}</div>`:""}
+   ${i.hasPhoto?`<img loading="lazy" src="/api/crew?photo=${encodeURIComponent(i.id)}&code=${encodeURIComponent(CREW.code)}" alt="Photo posted by ${esc(i.angler)}" style="max-width:100%;max-height:440px;object-fit:cover;border-radius:8px">`:""}
+   ${cond?`<div class="small muted">${esc(cond)}</div>`:""}
+   ${mine?`<div><button class="btn ghost small" type="button" data-crewdel="${esc(i.id)}">Delete</button></div>`:""}
+  </div>`;
+}
+function renderFeed(){
+  if(!crewMode())return;
+  const rv=$("#feedRiver").value,t=$("#feedType").value;
+  const items=CREW.items.filter(i=>(!rv||i.riverId===rv)&&(!t||i.type===t)).slice(0,80);
+  $("#feed").innerHTML=items.length?items.map(feedItem).join(""):`<div class="card small muted">${CREW.loaded?"Nothing posted yet. Be the first to post how it fished.":"Loading crew posts…"}</div>`;
+  bindDel("#feed");
+}
+function rerender(){const y=window.scrollY;route();window.scrollTo(0,y)}
+function bindDel(sel){$$(sel+" [data-crewdel]").forEach(b=>b.onclick=async()=>{
+  b.disabled=true;
+  try{await crewApi("?id="+encodeURIComponent(b.dataset.crewdel)+"&angler="+encodeURIComponent(CREW.name),{method:"DELETE"});CREW.items=CREW.items.filter(x=>x.id!==b.dataset.crewdel);rerender();toast("Deleted")}
+  catch(e){toast(e.message||"Couldn't delete. Try again.");b.disabled=false}
+})}
+async function postCrew(payload,file){
+  if(file){const s=await shrinkImage(file,1100,0.8);payload.photo=s.b64}
+  const j=await crewApi("",{method:"POST",body:JSON.stringify({angler:CREW.name,...payload})});
+  CREW.items.unshift(j.item);return j.item;
+}
+async function joinCrew(e){
+  e.preventDefault();
+  CREW.name=$("#jName").value.trim();CREW.code=$("#jCode").value.trim();
+  await pingCrew();
+  if(!CREW.authed){$("#joinMsg").textContent="That crew code isn't right. Check with whoever sent you the link.";return}
+  store.set("crewName",CREW.name);store.set("crewCode",CREW.code);$("#joinMsg").textContent="";
+  syncCrewChrome();await loadCrew();await initSample();rerender();toast("Welcome to the crew, "+CREW.name);
+}
+async function submitReport(e){
+  e.preventDefault();
+  const btn=$("#repGo");btn.disabled=true;btn.textContent="Posting…";
+  const r=riverById($("#repRiver").value);const c=conditions(r);
+  try{
+    await postCrew({type:"report",date:$("#repDate").value,riverId:r.id,river:rLabel(r),rating:+$("#repRating").value,flies:$("#repFlies").value,notes:$("#repNotes").value,
+      cfs:c.cfs,wtF:c.wtF!=null?Math.round(c.wtF):null,sky:c.sky||"",airF:c.airF!=null?Math.round(c.airF):null},$("#repPhoto").files[0]);
+    $("#repFlies").value="";$("#repNotes").value="";$("#repPhoto").value="";renderFeed();toast("Report posted");
+  }catch(err){toast(err.message||"Couldn't post. Try again.")}
+  finally{btn.disabled=false;btn.textContent="Post report"}
+}
+async function saveCrewCatch(){
+  const btn=$("#logGo");btn.disabled=true;btn.textContent="Saving…";
+  const r=riverById($("#lgRiver").value);const c=r?conditions(r):{};
+  try{
+    await postCrew({type:"catch",date:$("#lgDate").value,riverId:r?.id||"",river:r?rLabel(r):"",species:$("#lgSpecies").value,length:$("#lgLen").value?+$("#lgLen").value:null,fly:$("#lgFly").value.trim(),
+      sky:$("#lgSky").value||c.sky||"",cfs:$("#lgCfs").value?+$("#lgCfs").value:c.cfs??null,wtF:$("#lgWt").value?+$("#lgWt").value:(c.wtF!=null?Math.round(c.wtF):null),
+      airF:c.airF!=null?Math.round(c.airF):null,pressure:c.pressure!=null?Math.round(c.pressure):null,moon:moonPhase(new Date($("#lgDate").value+"T12:00")),notes:$("#lgNotes").value.trim()},$("#lgPhoto").files[0]);
+    ["lgLen","lgFly","lgNotes","lgCfs","lgWt","lgPhoto"].forEach(id=>$("#"+id).value="");renderLog();toast("Catch shared with the crew");
+  }catch(err){toast(err.message||"Couldn't save. Try again.")}
+  finally{btn.disabled=false;btn.textContent="Save catch"}
+}
+function renderWeekend(rivers){
+  const el=$("#weekend");const now=new Date();const dow=now.getDay();
+  let start=new Date(now);if(dow>=1&&dow<=4)start.setDate(now.getDate()+(5-dow));
+  const days=[];for(let d=new Date(start);days.length<3&&d.getDay()!==1;d.setDate(d.getDate()+1))days.push(new Date(d));
+  const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+  const rows=rivers.filter(r=>COND[r.id]?.wx?.daily&&!offSeason(r));
+  if(!rows.length){el.innerHTML=`<h3>Weekend outlook</h3><p class="small muted">The weekend forecast for every river shows up here when live weather loads.</p>`;return}
+  const cell=(r,d)=>{const w=COND[r.id].wx.daily;const k=w.time.indexOf(iso(d));if(k<0)return `<td class="muted">—</td>`;
+    const rain=w.precipitation_probability_max[k],wind=w.wind_speed_10m_max[k],hi=w.temperature_2m_max[k],lo=w.temperature_2m_min[k];
+    const bad=rain>=60||wind>=22||hi<28,meh=rain>=35||wind>=15;
+    return `<td><span class="pill ${bad?"bad":meh?"warn":"good"}" style="font-weight:500"><span class="dot"></span><span class="num">${fmt(hi)}°/${fmt(lo)}°</span></span><div class="small muted num">${fmt(rain)}% rain · ${fmt(wind)} mph</div></td>`};
+  el.innerHTML=`<h3>Weekend outlook</h3><p class="small muted">Green means good fishing weather. Yellow means some wind or rain. Red means a washout, a gale or deep cold.</p><div class="scroll"><table><tr><th>Water</th>${days.map(d=>`<th>${d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})}</th>`).join("")}</tr>${rows.map(r=>`<tr><td><a href="#river-${esc(r.id)}">${esc(r.name)}</a><div class="small muted">${esc(r.section)}</div></td>${days.map(d=>cell(r,d)).join("")}</tr>`).join("")}</table></div>`;
+}
 async function initSample(){
   try{
     if(!window.claude||typeof window.claude.use!=="function")throw 0;
@@ -1065,6 +1296,9 @@ async function initSample(){
     if(!SAMPLE)throw 0;
     try{SAMPLE_IMG=!!(await SAMPLE.limits())?.images}catch(e){SAMPLE_IMG=false}
   }catch(e){SAMPLE=null}
+  if(!SAMPLE&&crewMode()){
+    try{const r=await fetch("/api/ai",{headers:{"x-crew-code":CREW.code}});const j=await r.json();if(j&&j.ok){SAMPLE=hostedSample();SAMPLE_IMG=true}}catch(e){}
+  }
   $("#guideOff").classList.toggle("hidden",!!SAMPLE);
   $("#chatForm").classList.toggle("hidden",!SAMPLE);$("#guideStarters").classList.toggle("hidden",!SAMPLE);
   $("#guideTab").classList.toggle("hidden",!SAMPLE);
@@ -1073,7 +1307,7 @@ async function initSample(){
 document.addEventListener("DOMContentLoaded",()=>{});
 (function init(){
   loadRivers();fillSelects();
-  $("#rfDate").value=todayISO();$("#lgDate").value=todayISO();$("#tpDate").value=todayISO();$("#rfTime").value=timeOfDay();
+  $("#rfDate").value=todayISO();$("#repDate").value=todayISO();$("#lgDate").value=todayISO();$("#tpDate").value=todayISO();$("#rfTime").value=timeOfDay();
   $("#hatchRiver").onchange=renderHatches;
   $("#recForm").addEventListener("input",renderRec);$("#recForm").addEventListener("change",renderRec);$("#recForm").onsubmit=e=>e.preventDefault();
   $("#rfRiver").addEventListener("change",()=>{const c=conditions(riverById($("#rfRiver").value));$("#rfTemp").value=c.wtF!=null?Math.round(c.wtF):"";if(c.sky)$("#rfSky").value=c.sky;renderRec()});
@@ -1085,12 +1319,17 @@ document.addEventListener("DOMContentLoaded",()=>{});
   $("#guideStarters").innerHTML=["What should I throw on the Metolius this week?","Set me up for a first Euro nymphing day","How do I fish a BWO hatch on a cold drizzly day?","Plan a winter day on the Crooked"].map(q=>`<button class="btn ghost small" type="button">${esc(q)}</button>`).join("");
   $$("#guideStarters button").forEach(b=>b.onclick=()=>askGuide(b.textContent));
   $("#logForm").onsubmit=saveCatch;
-  $("#copyCsv").onclick=()=>CATCHES.length?copyText(csv()):toast("Log a fish first");
+  $("#copyCsv").onclick=()=>logRows().length?copyText(csv()):toast("Log a fish first");
   $("#tripForm").addEventListener("change",renderTrip);
   $("#addGauge").onsubmit=addGaugeSubmit;
+  $("#joinForm").onsubmit=joinCrew;$("#repForm").onsubmit=submitReport;
+  $("#feedRiver").onchange=renderFeed;$("#feedType").onchange=renderFeed;$("#logScope").onchange=renderLog;
+  $("#feedRefresh").onclick=async()=>{await loadCrew();renderFeed();toast("Up to date")};
+  $("#crewLeave").onclick=e=>{e.preventDefault();CREW.name="";store.set("crewName","");$("#jName").value="";syncCrewChrome()};
   window.addEventListener("hashchange",route);
   route();
-  initStorage();initSample();
+  initStorage();
+  (async()=>{await pingCrew();syncCrewChrome();if(crewMode()){await loadCrew();}await initSample();if(crewMode())rerender()})();
   // live feeds
   Promise.all(RIVERS.map(loadConditions)).then(()=>{updateBadge();const h=location.hash.slice(1);if(!h.startsWith("river-")&&!["guide","log","bugid"].includes(h))route();else if(h.startsWith("river-"))renderRiver(h.slice(6))});
 })();
