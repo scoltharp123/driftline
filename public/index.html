@@ -1958,8 +1958,8 @@ function verdict(r,dayOffset=0){
   const b=biteTimes(r,dayOffset);if(b){const pk=Math.max(...b.best.map(x=>x.s));if(pk>=.75){s+=10;reasons.push([10,`best from ${hr(b.from)}–${hr(b.to)}`])}else reasons.push([2,`best from ${hr(b.from)}–${hr(b.to)}`])}
   const rep=crewMode()?CREW.items.filter(i=>i.type==="report"&&i.riverId===r.id&&i.rating&&(i.created||0)>Date.now()-7*864e5):[];
   if(rep.length){const avg=rep.reduce((a,i)=>a+i.rating,0)/rep.length;const who=rep[0].angler;if(avg>=4){s+=12;reasons.push([12,`${who} says it's ${RATING[Math.round(avg)].toLowerCase()}`])}else if(avg<=2){s-=10;reasons.push([-10,`${who} says it's ${RATING[Math.round(avg)].toLowerCase()}`])}}
-  const top=bugScores(r,{month:m,wtF:c.wtF,sky:c.sky||"partly",time:"midday",flowK:fk})[0];if(top&&top.s>=2.5){s+=6;reasons.push([6,`${BUGS[top.b].name.toLowerCase()}s on the menu`])}
-  const d=DRIVE[r.id];if(d!=null&&d>150){s-=8}
+  const top=bugScores(r,{month:m,wtF:c.wtF,sky:c.sky||"partly",time:"midday",flowK:fk})[0];if(top&&top.s>=2.5){s+=6;const nm=BUGS[top.b].name.toLowerCase();reasons.push([6,`${/s$|and /.test(nm)?nm:nm+"s"} on the menu`])}
+  const d=DRIVE[r.id];if(d!=null){s-=Math.max(0,(d-60)/20);if(d>150)s-=4}
   const v=s>=70?"Go":s>=45?"Maybe":"Skip";const k=v==="Go"?"good":v==="Maybe"?"warn":"bad";
   const pos=reasons.filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0]).map(x=>x[1]),neg=reasons.filter(x=>x[0]<0).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
   const parts=v==="Go"?pos.slice(0,3):v==="Skip"?neg.slice(0,2):[...pos.slice(0,1),...neg.slice(0,2)];
