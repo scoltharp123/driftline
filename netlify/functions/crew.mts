@@ -1,5 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { getStore } from "@netlify/blobs";
+import { allSubs, configure, send } from "../lib/push.mjs";
 
 // Shared crew data: fishing reports and catches (one blob per entry, so two
 // friends posting at once never overwrite each other) plus optional photos.
@@ -18,7 +19,21 @@ function crewOk(req: Request) {
   return got.trim().toLowerCase() === code.trim().toLowerCase();
 }
 
-export default async (req: Request) => {
+async function notifyCrew(item: any) {
+  if (!configure()) return;
+  const river = String(item.river || "").split(" · ")[0] || "the river";
+  const title = item.type === "catch"
+    ? `${item.angler} caught ${item.length ? `a ${item.length}" ` : "a "}${String(item.species || "fish").toLowerCase()}`
+    : `${item.angler} posted a report`;
+  const body = item.type === "catch" ? `On ${river}${item.fly ? ` with a ${item.fly}` : ""}.` : `${river}: ${["", "slow", "fair", "good", "great", "epic"][item.rating || 0] || "new report"}. ${String(item.notes || "").slice(0, 90)}`;
+  for (const [key, rec] of await allSubs()) {
+    if (rec.crew === false) continue;
+    if (String(rec.name || "").toLowerCase() === String(item.angler).toLowerCase()) continue;
+    await send(key, rec, { title, body, url: "/#crew", tag: "crew-" + item.id });
+  }
+}
+
+export default async (req: Request, context: any) => {
   const url = new URL(req.url);
 
   if (url.searchParams.get("ping")) {
@@ -49,7 +64,7 @@ export default async (req: Request) => {
       } catch {
         return Response.json({ error: "Request body must be JSON." }, { status: 400 });
       }
-      const type = b.type === "report" ? "report" : b.type === "catch" ? "catch" : null;
+      const type = b.type === "report" ? "report" : b.type === "catch" ? "catch" : b.type === "pin" ? "pin" : null;
       const angler = str(b.angler, 40);
       if (!type || !angler) return Response.json({ error: "A type and your name are required." }, { status: 400 });
       const id = String(Date.now()).padStart(15, "0") + "-" + Math.random().toString(36).slice(2, 8);
@@ -66,8 +81,10 @@ export default async (req: Request) => {
         species: str(b.species, 40), length: num(b.length), fly: str(b.fly, 80),
         rating: num(b.rating), flies: str(b.flies, 200), notes: str(b.notes, 1500),
         sky: str(b.sky, 12), cfs: num(b.cfs), wtF: num(b.wtF), airF: num(b.airF), pressure: num(b.pressure), moon: str(b.moon, 20),
+        lat: num(b.lat), lon: num(b.lon), pinType: str(b.pinType, 20), name: str(b.name, 80),
       };
       await entries().setJSON("e/" + id, item);
+      if (type !== "pin") context?.waitUntil?.(notifyCrew(item).catch((e) => console.error("notify failed", e)));
       return Response.json({ item });
     }
 
