@@ -2,320 +2,476 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Driftline Fly Fishing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Driftline</title>
+<meta name="description" content="Flows, hatches, flies and crew reports for the water you fish.">
+<meta name="theme-color" content="#eef1ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1517" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Driftline">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
 <style>
-/* Layout idea: a field notebook for rivers. Sticky tab rail on top, river cards as gauge readouts, everything one tap from "what do I tie on". */
+/* Driftline: a pocket river app. One column like a phone app, a bottom tab bar,
+   the river-glass hero as the one bold moment, quiet list rows everywhere else. */
 :root{
-  --bg:#eef1ee; --surface:#ffffff; --ink:#18262a; --muted:#5b6b6e; --line:#d5dcd8;
-  --river:#1d5c73; --river-soft:#dbe9ee; --hackle:#c45f2a;
-  --good:#2f7a4a; --warn:#b07a12; --bad:#b23a32;
-  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --bg:#eef1ec; --surface:#ffffff; --sunk:#e3e9e2; --ink:#14211f; --muted:#5b6b67; --line:#d6ded7;
+  --river:#0f6b73; --deep:#0a3540; --river-soft:#dcebe9; --fly:#e5603f;
+  --good:#2b7a4b; --warn:#a2700b; --bad:#b5372d;
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --r-lg:22px; --r-md:14px; --r-sm:10px;
+  --top:env(safe-area-inset-top,0px); --bot:env(safe-area-inset-bottom,0px);
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0f1719; --surface:#172225; --ink:#e3ecea; --muted:#93a5a6; --line:#2a3a3d;
-    --river:#5fb3cc; --river-soft:#1b3640; --hackle:#e98a52;
-    --good:#5cc07f; --warn:#e0b34a; --bad:#ef7468; color-scheme:dark;
+    --bg:#0d1517; --surface:#152124; --sunk:#101b1d; --ink:#e6eeec; --muted:#93a6a2; --line:#24363a;
+    --river:#56b8bd; --deep:#06242b; --river-soft:#17343a; --fly:#ff8466;
+    --good:#5ccb87; --warn:#e3b54d; --bad:#f07a6e; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0f1719; --surface:#172225; --ink:#e3ecea; --muted:#93a5a6; --line:#2a3a3d;
-  --river:#5fb3cc; --river-soft:#1b3640; --hackle:#e98a52;
-  --good:#5cc07f; --warn:#e0b34a; --bad:#ef7468; color-scheme:dark;
+  --bg:#0d1517; --surface:#152124; --sunk:#101b1d; --ink:#e6eeec; --muted:#93a6a2; --line:#24363a;
+  --river:#56b8bd; --deep:#06242b; --river-soft:#17343a; --fly:#ff8466;
+  --good:#5ccb87; --warn:#e3b54d; --bad:#f07a6e; color-scheme:dark;
 }
-*{box-sizing:border-box}
-html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body)}
-h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
-h2{font-size:1.6rem}
-h3{font-size:1.1rem}
-a{color:var(--river)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1;letter-spacing:-.015em}
+h1{font-size:2rem;font-weight:800}
+h2{font-size:1.55rem;font-weight:800}
+h3{font-size:1.08rem;font-weight:700}
+a{color:var(--river);text-underline-offset:3px}
 button,input,select,textarea{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--hackle);outline-offset:2px}
-.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
-header.top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:10px;padding:10px 16px 4px;max-width:1180px;margin:0 auto}
-.brand h1{font-size:1.35rem;letter-spacing:-.01em}
-.brand .sub{color:var(--muted);font-size:.85rem}
-.brand .live{margin-left:auto}
-nav.tabs{display:flex;gap:2px;overflow-x:auto;padding:0 12px;max-width:1180px;margin:0 auto;scrollbar-width:none}
-nav.tabs a{flex:none;padding:9px 12px;text-decoration:none;color:var(--muted);border-bottom:3px solid transparent;font-weight:500;white-space:nowrap}
-nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--hackle)}
-main{max-width:1180px;margin:0 auto;padding:18px 16px 60px;display:grid;gap:18px}
-.view{display:none;gap:18px}
-.view.on{display:grid}
-.lede{color:var(--muted);max-width:68ch;margin:4px 0 0}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
-.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.stack{display:grid;gap:10px}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:99px;font-size:.8rem;font-weight:600;border:1px solid currentColor;white-space:nowrap}
-.pill.good{color:var(--good)} .pill.warn{color:var(--warn)} .pill.bad{color:var(--bad)} .pill.na{color:var(--muted)}
-.dot{width:8px;height:8px;border-radius:50%;background:currentColor}
-.chip{display:inline-block;padding:3px 9px;border-radius:6px;background:var(--river-soft);color:var(--ink);font-size:.82rem;margin:2px 4px 2px 0}
+:focus-visible{outline:3px solid var(--fly);outline-offset:2px;border-radius:6px}
+.num{font-variant-numeric:tabular-nums}
+.hidden{display:none !important}
 .muted{color:var(--muted)}
-.small{font-size:.85rem}
-.btn{cursor:pointer;border:1px solid var(--river);background:var(--river);color:var(--surface);padding:7px 14px;border-radius:7px;font-weight:600}
-.btn.ghost{background:transparent;color:var(--river)}
+.small{font-size:.875rem}
+
+/* ---------- app chrome ---------- */
+.appbar{position:sticky;top:0;z-index:10;padding:calc(var(--top) + 10px) 18px 10px;display:flex;align-items:center;gap:10px;
+  background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px)}
+.appbar .mark{width:32px;height:32px;border-radius:9px;display:block;flex:none}
+.appbar .word{font-family:var(--display);font-weight:800;font-size:1.3rem;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.appbar .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted)}
+.live .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.live.on .dot{background:var(--good);box-shadow:0 0 0 4px color-mix(in srgb,var(--good) 22%,transparent)}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--fly);color:#fff;font-family:var(--display);font-weight:800;text-decoration:none;flex:none;font-size:.95rem}
+.avatar.ghost{background:var(--sunk);color:var(--muted)}
+nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:grid;grid-template-columns:repeat(5,1fr);
+  padding:6px 8px calc(var(--bot) + 6px);background:color-mix(in srgb,var(--surface) 92%,transparent);
+  backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-top:1px solid var(--line)}
+nav.tabbar a{display:grid;justify-items:center;gap:2px;padding:6px 0 4px;color:var(--muted);text-decoration:none;font-size:.72rem;font-weight:700;border-radius:12px}
+nav.tabbar a svg{width:26px;height:26px}
+nav.tabbar a[aria-current="page"]{color:var(--river)}
+nav.tabbar a[aria-current="page"] svg{background:var(--river-soft);border-radius:10px;padding:2px;width:44px}
+main{max-width:760px;margin:0 auto;padding:6px 18px calc(var(--bot) + 104px);display:grid;gap:22px}
+@media (min-width:960px){
+  nav.tabbar{top:0;right:auto;width:96px;grid-template-columns:1fr;align-content:start;gap:6px;padding:calc(var(--top) + 80px) 10px 20px;border-top:0;border-right:1px solid var(--line)}
+  .appbar{padding-left:116px}
+  main{padding-left:18px;padding-bottom:60px}
+  body{padding-left:96px}
+  .appbar{margin-left:-96px}
+}
+.view{display:none;gap:22px;align-content:start}
+.view.on{display:grid;animation:in .22s ease-out}
+@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+.lede{color:var(--muted);max-width:60ch;margin:6px 0 0}
+.back{display:inline-flex;align-items:center;gap:4px;font-weight:700;text-decoration:none;font-size:.95rem;margin-bottom:6px}
+
+/* ---------- building blocks ---------- */
+.card{background:var(--surface);border-radius:var(--r-md);padding:18px;box-shadow:0 1px 0 var(--line)}
+.stack{display:grid;gap:12px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.cols{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.section-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.section-h a{font-weight:700;font-size:.9rem;text-decoration:none}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:.8rem;font-weight:700;white-space:nowrap;
+  background:color-mix(in srgb,currentColor 12%,transparent)}
+.pill.good{color:var(--good)} .pill.warn{color:var(--warn)} .pill.bad{color:var(--bad)} .pill.na{color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.chip{display:inline-block;padding:4px 10px;border-radius:99px;background:var(--river-soft);color:var(--ink);font-size:.82rem;margin:2px 4px 2px 0}
+.btn{cursor:pointer;border:0;background:var(--river);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;min-height:46px}
+.btn.fly{background:var(--fly)}
+.btn.ghost{background:var(--river-soft);color:var(--river)}
+.btn.small{padding:7px 12px;min-height:34px;font-size:.85rem;border-radius:10px}
 .btn:disabled{opacity:.5;cursor:default}
-label.f{display:grid;gap:3px;font-size:.82rem;color:var(--muted);font-weight:500}
-input,select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0}
+label.f{display:grid;gap:5px;font-size:.85rem;color:var(--muted);font-weight:700}
+input,select,textarea{background:var(--sunk);border:1px solid transparent;border-radius:12px;padding:11px 12px;min-width:0;font-size:16px;color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--river);outline:none;background:var(--surface)}
+input[type=file]{padding:9px;font-size:.9rem}
 textarea{resize:vertical}
-.form{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-.rcard{display:grid;gap:8px;cursor:pointer;text-align:left;position:relative;overflow:hidden}
-.rcard:hover{border-color:var(--river)}
-.rcard .stripe{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--muted)}
-.rcard .stripe.good{background:var(--good)} .rcard .stripe.warn{background:var(--warn)} .rcard .stripe.bad{background:var(--bad)}
-.readout{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.readout div{display:grid}
-.readout b{font-family:var(--mono);font-size:1.15rem;font-variant-numeric:tabular-nums}
-.readout span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.rank{font-family:var(--mono);color:var(--hackle);font-weight:500}
+.form{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.form .full{grid-column:1/-1}
+.note{border-radius:var(--r-sm);padding:12px 14px;background:var(--river-soft)}
+details.fold{background:var(--surface);border-radius:var(--r-md);box-shadow:0 1px 0 var(--line)}
+details.fold>summary{list-style:none;cursor:pointer;padding:16px 18px;font-family:var(--display);font-weight:700;font-size:1.05rem;display:flex;justify-content:space-between;align-items:center}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::after{content:"";width:9px;height:9px;border-right:2.5px solid var(--muted);border-bottom:2.5px solid var(--muted);transform:rotate(45deg);transition:transform .2s;margin-right:4px}
+details.fold[open]>summary::after{transform:rotate(-135deg)}
+details.fold>.body{padding:0 18px 18px;display:grid;gap:12px}
+details summary{cursor:pointer;font-weight:700}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--sunk);border-radius:12px;padding:4px;gap:4px}
+.seg a{text-align:center;padding:9px 6px;border-radius:9px;text-decoration:none;color:var(--muted);font-weight:700;font-size:.92rem}
+.seg a[aria-current="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 table{border-collapse:collapse;width:100%}
-th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.78rem;color:var(--muted);font-weight:700}
 .scroll{overflow-x:auto}
-.heat td{text-align:center;padding:0;border:2px solid var(--surface);height:30px;min-width:34px;font-family:var(--mono);font-size:.75rem}
-.heat th.m{text-align:center}
-.heat td.now,.heat th.now{outline:2px solid var(--hackle);outline-offset:-2px}
-.heat td.name{text-align:left;padding:0 10px;font-family:var(--body);font-size:.88rem;white-space:nowrap}
+.toast{position:fixed;bottom:calc(var(--bot) + 88px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:.92rem;z-index:30;font-weight:700}
+
+/* ---------- hero (the one bold moment) ---------- */
+.hero{position:relative;overflow:hidden;border-radius:var(--r-lg);padding:22px 20px 18px;color:#f2fbfa;
+  background:radial-gradient(120% 90% at 0% 0%,#19858c 0%,transparent 60%),linear-gradient(160deg,#0f6b73,#0a3540 70%);display:grid;gap:14px;text-decoration:none}
+.hero h2{font-size:2.3rem;color:#fff;line-height:1}
+.hero .sec{opacity:.82;font-size:.95rem;margin-top:4px}
+.hero .tag{font-weight:700;font-size:.85rem;opacity:.85}
+.hero .reads{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hero .reads b{display:block;font-family:var(--display);font-size:1.6rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.hero .reads span{font-size:.78rem;opacity:.8}
+.hero .wave{position:absolute;right:0;left:0;bottom:0;height:70px;opacity:.5;pointer-events:none}
+.hero .flies{display:flex;flex-wrap:wrap;gap:6px;position:relative}
+.hero .flies span{background:rgba(255,255,255,.14);padding:5px 10px;border-radius:99px;font-size:.85rem}
+.hero .pill{background:rgba(255,255,255,.16);color:#fff}
+.hero .row{position:relative}
+.hero-river{margin:0 -18px;border-radius:0 0 var(--r-lg) var(--r-lg);padding-top:16px}
+@media (min-width:700px){.hero-river{margin:0;border-radius:var(--r-lg)}}
+
+/* ---------- home ---------- */
+.greet h1{font-size:1.9rem}
+.greet p{margin:4px 0 0;color:var(--muted)}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.quick a{display:grid;justify-items:center;gap:6px;text-decoration:none;color:var(--ink);font-size:.8rem;font-weight:700;text-align:center}
+.quick a i{width:56px;height:56px;border-radius:18px;background:var(--surface);display:grid;place-items:center;box-shadow:0 1px 0 var(--line);color:var(--river)}
+.quick a i svg{width:26px;height:26px}
+.install{display:flex;gap:14px;align-items:center}
+.install img{width:52px;height:52px;border-radius:13px;flex:none}
+
+/* ---------- river rows ---------- */
+.list{background:var(--surface);border-radius:var(--r-md);box-shadow:0 1px 0 var(--line);overflow:hidden}
+.rrow{display:grid;grid-template-columns:4px 1fr auto;gap:14px;align-items:center;padding:14px 16px 14px 0;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line)}
+.rrow:last-child{border-bottom:0}
+.rrow:hover{background:color-mix(in srgb,var(--river-soft) 45%,transparent)}
+.rrow .st{align-self:stretch;border-radius:0 4px 4px 0;background:var(--muted)}
+.rrow .st.good{background:var(--good)} .rrow .st.warn{background:var(--warn)} .rrow .st.bad{background:var(--bad)}
+.rrow .nm{font-family:var(--display);font-weight:700;font-size:1.08rem;line-height:1.2}
+.rrow .sc{color:var(--muted);font-size:.86rem}
+.rrow .bugs{font-size:.84rem;color:var(--river);margin-top:3px}
+.rrow .rt{display:grid;justify-items:end;gap:4px;text-align:right}
+.rrow .rt .v{font-size:.84rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.rrow .rk{font-family:var(--display);font-weight:800;color:var(--fly);margin-right:6px}
+.rrow .crewc{font-size:.8rem;color:var(--fly);margin-top:3px;font-weight:700}
+.list-h{padding:14px 16px 4px;font-family:var(--display);font-weight:700;color:var(--muted);font-size:.9rem}
+
+/* ---------- readouts, flies, misc ---------- */
+.readout{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.readout div{display:grid}
+.readout b{font-family:var(--display);font-size:1.35rem;font-weight:700;font-variant-numeric:tabular-nums}
+.readout span{font-size:.78rem;color:var(--muted)}
 .flylist{display:grid;gap:8px}
-.fly{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
-.fly b{font-weight:600}
-.cols{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-.note{border-left:3px solid var(--hackle);padding:8px 12px;background:var(--surface);border-radius:0 8px 8px 0}
-.bars{display:grid;gap:6px}
-.bar{display:grid;grid-template-columns:130px 1fr 36px;gap:8px;align-items:center;font-size:.85rem}
-.bar i{display:block;height:10px;border-radius:3px;background:var(--river)}
-.chat{display:grid;gap:10px;max-height:460px;overflow-y:auto;padding:4px}
-.msg{padding:10px 12px;border-radius:10px;max-width:85%;white-space:pre-wrap}
-.msg.u{justify-self:end;background:var(--river);color:var(--surface)}
-.msg.a{justify-self:start;background:var(--river-soft)}
+.fly{display:flex;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:12px;background:var(--sunk)}
+.fly b{font-weight:700}
+.heat td{text-align:center;padding:0;border:2px solid var(--surface);height:30px;min-width:32px;font-size:.75rem;border-radius:6px}
+.heat th.m{text-align:center}
+.heat td.now,.heat th.now{outline:2px solid var(--fly);outline-offset:-2px}
+.heat td.name{text-align:left;padding:0 10px;font-size:.88rem;white-space:nowrap}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:120px 1fr 30px;gap:8px;align-items:center;font-size:.86rem}
+.bar i{display:block;height:10px;border-radius:99px;background:var(--river)}
+.chat{display:grid;gap:10px;max-height:58vh;overflow-y:auto;padding:4px}
+.msg{padding:11px 14px;border-radius:18px;max-width:86%;white-space:pre-wrap}
+.msg.u{justify-self:end;background:var(--river);color:#fff;border-bottom-right-radius:6px}
+.msg.a{justify-self:start;background:var(--sunk);border-bottom-left-radius:6px}
 svg text{fill:var(--ink);font-family:var(--body)}
 .knot ol{margin:6px 0 0;padding-left:20px}
-.hidden{display:none !important}
-.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;font-size:.9rem;z-index:20}
-details summary{cursor:pointer;font-weight:600}
-@media (max-width:420px){.readout b{font-size:1rem} h2{font-size:1.35rem}}
+.post{display:grid;gap:10px;background:var(--surface);border-radius:var(--r-md);padding:16px;box-shadow:0 1px 0 var(--line)}
+.post .who{display:flex;gap:10px;align-items:center}
+.post .who .avatar{width:38px;height:38px}
+.post img{width:100%;max-height:460px;object-fit:cover;border-radius:12px}
+.menu{background:var(--surface);border-radius:var(--r-md);box-shadow:0 1px 0 var(--line);overflow:hidden}
+.menu a,.menu .mi{display:flex;align-items:center;gap:14px;padding:15px 16px;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line)}
+.menu a:last-child,.menu .mi:last-child{border-bottom:0}
+.menu i{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--river-soft);color:var(--river);flex:none}
+.menu i svg{width:22px;height:22px}
+.menu b{display:block;font-weight:700}
+.menu span{font-size:.86rem;color:var(--muted)}
+.menu a::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2.5px solid var(--muted);border-top:2.5px solid var(--muted);transform:rotate(45deg)}
+.rcard{display:grid;gap:8px}
+.stripe{display:none}
 @media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="brand">
-    <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M3 20 C 9 8, 15 26, 27 10" fill="none" stroke="var(--river)" stroke-width="2.4" stroke-linecap="round"/><circle cx="27" cy="10" r="2.6" fill="var(--hackle)"/></svg>
-    <div><h1>Driftline</h1><div class="sub">Flows, hatches and flies for the water you're fishing</div></div>
-    <span class="live row" style="gap:6px"><a class="pill na hidden" id="crewBadge" href="#crew" style="text-decoration:none"></a><span class="pill na" id="liveBadge"><span class="dot"></span>Checking feeds</span></span>
+<header class="appbar">
+  <a href="#home" aria-label="Driftline home" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+    <svg class="mark" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#17878e"/><stop offset="1" stop-color="#0a3540"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#lg)"/><g fill="none" stroke="#fff" stroke-linecap="round"><ellipse cx="330" cy="384" rx="62" ry="16" stroke-opacity=".26" stroke-width="10"/></g><path d="M96 132 C 170 128, 240 150, 282 200 C 330 258, 306 320, 246 316 C 192 312, 194 246, 250 240 C 290 236, 312 262, 318 300" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round"/><path d="M318 300 C 322 330, 326 352, 328 368" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/><ellipse cx="337" cy="371" rx="26" ry="15" fill="#ff7759"/></svg>
+    <span class="word">Driftline</span>
+  </a>
+  <div class="right">
+    <span class="live" id="liveBadge"><span class="dot"></span><span class="lt">Loading</span></span>
+    <a class="avatar ghost" id="crewBadge" href="#crew" aria-label="Crew">?</a>
   </div>
-  <nav class="tabs" id="tabs">
-    <a href="#today">Today</a><a href="#crew">Crew</a><a href="#rivers">Rivers</a><a href="#hatches">Hatches</a><a href="#flies">Fly Box</a>
-    <a href="#bugid">Bug ID</a><a href="#guide" class="hidden" id="guideTab">Ask a Guide</a><a href="#log">Catch Log</a><a href="#trip">Trip Planner</a>
-    <a href="#learn">Knots &amp; Rigs</a><a href="#map">Map</a>
-  </nav>
 </header>
+
+<nav class="tabbar" id="tabs" aria-label="Main">
+  <a href="#home" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Home</a>
+  <a href="#rivers" data-tab="rivers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8c2.5-2 4.5-2 7 0s4.5 2 7 0 4.5-2 6 0"/><path d="M2 13c2.5-2 4.5-2 7 0s4.5 2 7 0 4.5-2 6 0"/><path d="M2 18c2.5-2 4.5-2 7 0s4.5 2 7 0 4.5-2 6 0"/></svg>Rivers</a>
+  <a href="#flies" data-tab="flies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v10a4 4 0 0 1-8 0v-2l2 2"/><path d="M14 6c3-3 6-2 7 0-2 1-4 2-7 2"/><path d="M14 8c2 1 4 3 4 5"/></svg>Flies</a>
+  <a href="#crew" data-tab="crew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.7.2 4.5 1.9 5 4.9"/></svg>Crew</a>
+  <a href="#more" data-tab="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>More</a>
+</nav>
+
 <main>
   <div id="feedNote" class="note small hidden"></div>
 
-  <!-- TODAY -->
-  <section class="view" id="v-today">
-    <div><h2 id="todayTitle">Where to fish today</h2><p class="lede" id="todayLede"></p></div>
-    <div class="grid" id="todayGrid"></div>
+  <!-- HOME -->
+  <section class="view" id="v-home">
+    <div class="greet"><h1 id="greet">Good morning</h1><p id="greetSub"></p></div>
+    <a class="hero" id="heroCard" href="#rivers"></a>
+    <div class="quick">
+      <a href="#log-new"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-5 9-6.5 13-3.5L21 5v14l-5-3.5C12 18.5 6 17 3 12z"/><circle cx="8" cy="11" r=".6" fill="currentColor"/></svg></i>Log a fish</a>
+      <a href="#report-new"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></i>Post report</a>
+      <a href="#guide"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg></i>Ask a guide</a>
+      <a href="#bugid"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="14" rx="4" ry="6"/><path d="M12 8V5M9 4l1.5 2M15 4l-1.5 2M8 12H4M8 16l-3 2M16 12h4M16 16l3 2"/></svg></i>ID a bug</a>
+    </div>
+    <div class="card install hidden" id="installCard"></div>
+    <div class="stack">
+      <div class="section-h"><h3>Also fishing well</h3><a href="#rivers">All waters</a></div>
+      <div class="list" id="todayGrid"></div>
+    </div>
+    <div class="stack" id="homeCrew"></div>
     <div class="card stack" id="weekend"></div>
-    <div class="card"><h3>Tie these on across the region</h3><p class="muted small" id="regionFlyNote"></p><div class="cols" id="regionFlies"></div></div>
+    <div class="card stack"><h3>Tie these on</h3><p class="muted small" id="regionFlyNote"></p><div class="flylist" id="regionFlies"></div></div>
   </section>
 
   <!-- RIVERS -->
   <section class="view" id="v-rivers">
-    <div><h2>Rivers</h2><p class="lede">Each river has its USGS gauge, a rating for the current flow, a hatch chart, flies, access, regulations and nearby shops. You can add any USGS gauge in the country.</p></div>
-    <div class="grid" id="riverGrid"></div>
-    <div class="card stack">
-      <h3>Add a river from any USGS gauge</h3>
-      <p class="muted small">Find the 8 to 15 digit site number on waterdata.usgs.gov. Set the ideal flow range from local knowledge so Driftline can rate it.</p>
+    <div><h2>Waters</h2><p class="lede">Live flow, temperature and what's hatching on every river and lake.</p></div>
+    <nav class="seg" aria-label="Rivers view"><a href="#rivers" aria-current="true">List</a><a href="#map">Map</a></nav>
+    <div class="list" id="riverGrid"></div>
+    <details class="fold"><summary>Add a river from a USGS gauge</summary><div class="body">
+      <p class="muted small">Find the site number on waterdata.usgs.gov. Set the ideal flow range from local knowledge so Driftline can rate it.</p>
       <form class="form" id="addGauge">
         <label class="f" for="agName">River name<input id="agName" required placeholder="Madison at Varney Bridge"></label>
-        <label class="f" for="agSite">USGS site number<input id="agSite" required pattern="[0-9]{8,15}" placeholder="06038800"></label>
+        <label class="f" for="agSite">USGS site number<input id="agSite" required pattern="[0-9]{8,15}" inputmode="numeric" placeholder="06038800"></label>
         <label class="f" for="agLat">Latitude<input id="agLat" type="number" step="any" placeholder="45.0"></label>
         <label class="f" for="agLon">Longitude<input id="agLon" type="number" step="any" placeholder="-111.6"></label>
         <label class="f" for="agLo">Ideal low (CFS)<input id="agLo" type="number" placeholder="800"></label>
         <label class="f" for="agHi">Ideal high (CFS)<input id="agHi" type="number" placeholder="1500"></label>
-        <label class="f" for="agType">Water type<select id="agType"><option value="freestone">Freestone</option><option value="tailwater">Tailwater</option><option value="spring">Spring creek</option><option value="lake">Lake / stillwater</option></select></label>
+        <label class="f" for="agType">Water type<select id="agType"><option value="freestone">Freestone</option><option value="tailwater">Tailwater</option><option value="spring">Spring creek</option><option value="lake">Lake</option></select></label>
         <div class="row" style="align-self:end"><button class="btn" type="submit">Add river</button></div>
       </form>
-    </div>
+    </div></details>
   </section>
 
   <!-- RIVER DETAIL -->
   <section class="view" id="v-river"></section>
 
-  <!-- HATCHES -->
-  <section class="view" id="v-hatches">
-    <div><h2>Hatch calendar</h2><p class="lede">Darker cells mean a heavier hatch. The outlined column is this month. Water temperature moves hatches by weeks, so use it as a guide and read the water.</p></div>
-    <div class="row"><label class="f" for="hatchRiver">River<select id="hatchRiver"></select></label></div>
-    <div class="card scroll"><table class="heat" id="heat"></table></div>
-    <div class="grid" id="bugCards"></div>
+  <!-- MAP -->
+  <section class="view" id="v-map">
+    <div><h2>Waters</h2><p class="lede">Dots show the current flow rating. Tap one to open it.</p></div>
+    <nav class="seg" aria-label="Rivers view"><a href="#rivers">List</a><a href="#map" aria-current="true">Map</a></nav>
+    <div class="card scroll" style="display:grid;justify-items:center;padding:8px"><svg id="mapSvg" role="img" aria-label="Map of the waters in Driftline"></svg></div>
   </section>
 
   <!-- FLY BOX -->
   <section class="view" id="v-flies">
-    <div><h2>Fly box recommender</h2><p class="lede">Pick the river and conditions. Driftline weighs the hatch calendar against water temperature, sky and time of day, then suggests dries, nymphs and a streamer with the right tippet.</p></div>
-    <div class="card"><form class="form" id="recForm">
-      <label class="f" for="rfRiver">River<select id="rfRiver"></select></label>
-      <label class="f" for="rfDate">Date<input id="rfDate" type="date"></label>
-      <label class="f" for="rfTemp">Water temp (°F)<input id="rfTemp" type="number" placeholder="Unknown"></label>
+    <div><h2>Flies</h2><p class="lede">What to tie on, matched to the hatch, the water and the weather.</p></div>
+    <nav class="seg" aria-label="Flies view"><a href="#flies" aria-current="true">What to tie on</a><a href="#bugid">ID a bug</a></nav>
+    <form class="card stack" id="recForm"><div class="form">
+      <label class="f" for="rfRiver">Water<select id="rfRiver"></select></label>
       <label class="f" for="rfSky">Sky<select id="rfSky"><option value="partly">Partly cloudy</option><option value="clear">Bluebird</option><option value="overcast">Overcast</option><option value="rain">Light rain</option></select></label>
       <label class="f" for="rfTime">Time of day<select id="rfTime"><option value="midday">Midday</option><option value="morning">Morning</option><option value="evening">Evening</option></select></label>
-      <label class="f" for="rfFlow">Flow<select id="rfFlow"><option value="auto">From gauge</option><option value="low">Low and clear</option><option value="ideal">Ideal</option><option value="high">High or off-color</option></select></label>
-    </form></div>
-    <div id="recOut" class="stack"></div>
-    <div class="card stack">
-      <div class="row"><h3>Every pattern</h3><select id="flyFilter" aria-label="Filter by fly type"><option value="">All types</option><option>Dry</option><option>Emerger</option><option>Nymph</option><option>Streamer</option></select></div>
-      <div class="scroll"><table id="flyTable"></table></div>
     </div>
+    <details><summary class="small">More options</summary><div class="form" style="margin-top:10px">
+      <label class="f" for="rfDate">Date<input id="rfDate" type="date"></label>
+      <label class="f" for="rfTemp">Water temp (°F)<input id="rfTemp" type="number" inputmode="numeric" placeholder="From gauge"></label>
+      <label class="f" for="rfFlow">Flow<select id="rfFlow"><option value="auto">From gauge</option><option value="low">Low and clear</option><option value="ideal">Ideal</option><option value="high">High or off-color</option></select></label>
+    </div></details></form>
+    <div id="recOut" class="stack"></div>
+    <details class="fold"><summary>Every pattern</summary><div class="body">
+      <select id="flyFilter" aria-label="Filter by fly type"><option value="">All types</option><option>Dry</option><option>Emerger</option><option>Nymph</option><option>Streamer</option></select>
+      <div class="scroll"><table id="flyTable"></table></div>
+    </div></details>
   </section>
 
   <!-- BUG ID -->
   <section class="view" id="v-bugid">
-    <div><h2>What's that bug?</h2><p class="lede">Flip a rock or catch one off the water, answer a few questions about it, and match it to a fly. Works with no signal.</p></div>
-    <div class="cols">
-      <div class="card stack hidden" id="photoCard">
-        <h3>Photo ID</h3>
-        <label class="f" for="bugPhoto">Photo of the insect<input id="bugPhoto" type="file" accept="image/*"></label>
-        <label class="f" for="bugRiver">Where you found it<select id="bugRiver"></select></label>
-        <button class="btn" id="bugGo" disabled>Identify</button>
-        <div id="bugPreview"></div>
-        <div id="bugResult"></div>
-      </div>
-      <div class="card stack">
-        <h3>Field key</h3>
-        <form class="form" id="keyForm" style="grid-template-columns:1fr 1fr">
-          <label class="f" for="kWhere">Where<select id="kWhere"><option value="air">Flying or on the water</option><option value="under">Under rocks or in the water</option></select></label>
-          <label class="f" for="kWings">Wings<select id="kWings"><option value="sail">Upright, like a sailboat</option><option value="tent">Folded like a tent</option><option value="flat">Flat over the back, 4 wings</option><option value="tiny">One tiny pair, gnat-like</option><option value="none">No wings</option></select></label>
-          <label class="f" for="kTails">Tails<select id="kTails"><option value="2-3long">2 or 3 long tails</option><option value="2short">2 short tails</option><option value="0">None</option></select></label>
-          <label class="f" for="kSize">Body length<select id="kSize"><option value="xs">Under 1/4 in</option><option value="s">1/4 to 1/2 in</option><option value="m">1/2 to 1 in</option><option value="l">Over 1 in</option></select></label>
-          <label class="f" for="kColor">Main color<select id="kColor"><option value="olive">Olive or gray</option><option value="yellow">Pale yellow</option><option value="tan">Tan or brown</option><option value="orange">Orange</option><option value="black">Black</option><option value="green">Green</option></select></label>
-          <label class="f" for="kExtra">Other clue<select id="kExtra"><option value="none">Nothing else</option><option value="case">Lives in a case of sticks or pebbles</option><option value="shrimp">Curled, shrimp-like, swims sideways</option><option value="worm">Thin segmented worm</option><option value="leech">Stretchy, swims like a ribbon</option><option value="hopper">Grasshopper, ant or beetle</option></select></label>
-        </form>
-        <div id="keyResult"></div>
-      </div>
+    <div><h2>Flies</h2><p class="lede">Flip a rock or catch one off the water and match it to a fly.</p></div>
+    <nav class="seg" aria-label="Flies view"><a href="#flies">What to tie on</a><a href="#bugid" aria-current="true">ID a bug</a></nav>
+    <div class="card stack hidden" id="photoCard">
+      <h3>Snap a photo</h3>
+      <label class="f" for="bugPhoto">Photo of the bug<input id="bugPhoto" type="file" accept="image/*" capture="environment"></label>
+      <label class="f" for="bugRiver">Where you found it<select id="bugRiver"></select></label>
+      <button class="btn" id="bugGo" disabled>Identify</button>
+      <div id="bugPreview"></div>
+      <div id="bugResult"></div>
     </div>
-  </section>
-
-  <!-- GUIDE -->
-  <section class="view" id="v-guide">
-    <div><h2>Ask a guide</h2><p class="lede">Ask anything: rigging, reading a run, where to start on a river you've never fished. Answers use today's conditions and hatch charts.</p></div>
-    <div class="card stack" id="guideCard">
-      <div class="chat" id="chat"></div>
-      <div class="row small" id="guideStarters"></div>
-      <form class="row" id="chatForm"><input id="chatIn" style="flex:1" placeholder="How should I fish the Crooked at 90 CFS in December?" aria-label="Your question"><button class="btn" type="submit">Ask</button></form>
-      <p class="muted small hidden" id="guideOff">Ask a Guide is for crew members. Join from the Crew tab with the crew code.</p>
+    <div class="card stack">
+      <h3>Or answer a few questions</h3>
+      <form class="form" id="keyForm" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))">
+        <label class="f" for="kWhere">Where<select id="kWhere"><option value="air">Flying or on the water</option><option value="under">Under rocks or in the water</option></select></label>
+        <label class="f" for="kWings">Wings<select id="kWings"><option value="sail">Upright, like a sail</option><option value="tent">Folded like a tent</option><option value="flat">Flat over the back</option><option value="tiny">One tiny pair</option><option value="none">No wings</option></select></label>
+        <label class="f" for="kTails">Tails<select id="kTails"><option value="2-3long">2 or 3 long</option><option value="2short">2 short</option><option value="0">None</option></select></label>
+        <label class="f" for="kSize">Length<select id="kSize"><option value="xs">Under 1/4 in</option><option value="s">1/4 to 1/2 in</option><option value="m">1/2 to 1 in</option><option value="l">Over 1 in</option></select></label>
+        <label class="f" for="kColor">Color<select id="kColor"><option value="olive">Olive or gray</option><option value="yellow">Pale yellow</option><option value="tan">Tan or brown</option><option value="orange">Orange</option><option value="black">Black</option><option value="green">Green</option></select></label>
+        <label class="f" for="kExtra">Other clue<select id="kExtra"><option value="none">Nothing else</option><option value="case">Lives in a case</option><option value="shrimp">Shrimp-like</option><option value="worm">Thin worm</option><option value="leech">Swims like a ribbon</option><option value="hopper">Hopper, ant or beetle</option></select></label>
+      </form>
+      <div id="keyResult"></div>
     </div>
   </section>
 
   <!-- CREW -->
   <section class="view" id="v-crew">
-    <div><h2>Crew</h2><p class="lede">Reports and catches from everyone in the crew. Post how it fished so the next person knows what to tie on.</p></div>
+    <div><h2>Crew</h2><p class="lede">How it's fishing, from the people you fish with.</p></div>
+    <nav class="seg crewSeg" aria-label="Crew view"><a href="#crew" aria-current="true">Reports</a><a href="#log">Catch log</a></nav>
     <div id="crewJoin" class="card stack hidden">
       <h3>Join the crew</h3>
-      <p class="small muted">Enter your name and the crew code. Joining turns on shared reports, the shared catch log, Ask a Guide and Photo ID.</p>
+      <p class="small muted">Enter your name and the crew code to share reports and catches, and to use Ask a Guide and photo bug ID.</p>
       <form class="form" id="joinForm">
         <label class="f" for="jName">Your name<input id="jName" required maxlength="40" autocomplete="nickname"></label>
-        <label class="f" for="jCode">Crew code<input id="jCode" required autocomplete="off"></label>
-        <div class="row" style="align-self:end"><button class="btn" type="submit">Join</button></div>
+        <label class="f" for="jCode">Crew code<input id="jCode" required autocomplete="off" autocapitalize="off"></label>
+        <div class="row" style="align-self:end"><button class="btn fly" type="submit">Join</button></div>
       </form>
       <p class="small" id="joinMsg"></p>
     </div>
-    <div id="crewOff" class="card hidden"><p class="small muted">Crew features run on the Driftline website at driftline-fly.netlify.app. This copy keeps your catch log on its own.</p></div>
+    <div id="crewOff" class="card hidden"><p class="small muted">Crew features run on the Driftline website at driftline-fly.netlify.app.</p></div>
     <div id="crewMain" class="stack hidden">
-      <div class="card stack">
-        <div class="row" style="justify-content:space-between"><h3>Post a report</h3><span class="small muted" id="crewWho"></span></div>
+      <details class="fold" id="repFold"><summary>Post a report</summary><div class="body">
         <form class="form" id="repForm">
           <label class="f" for="repRiver">Water<select id="repRiver"></select></label>
           <label class="f" for="repDate">Date<input id="repDate" type="date" required></label>
           <label class="f" for="repRating">How it fished<select id="repRating"><option value="5">Epic</option><option value="4">Great</option><option value="3" selected>Good</option><option value="2">Fair</option><option value="1">Slow</option></select></label>
-          <label class="f" for="repFlies">Flies that worked<input id="repFlies" list="flyNames" placeholder="BWO Sparkle Dun #20, Zebra Midge #20"></label>
-          <label class="f" for="repNotes" style="grid-column:1/-1">What happened<textarea id="repNotes" rows="3" placeholder="Fish rising in the slow water below the bridge from 1 to 3. Nothing on top before that."></textarea></label>
-          <label class="f" for="repPhoto">Photo (optional)<input id="repPhoto" type="file" accept="image/*"></label>
-          <div class="row" style="align-self:end"><button class="btn" type="submit" id="repGo">Post report</button></div>
+          <label class="f full" for="repFlies">Flies that worked<input id="repFlies" list="flyNames" placeholder="BWO Sparkle Dun #20, Zebra Midge #20"></label>
+          <label class="f full" for="repNotes">What happened<textarea id="repNotes" rows="3" placeholder="Fish rising in the slow water below the bridge from 1 to 3."></textarea></label>
+          <label class="f" for="repPhoto">Photo<input id="repPhoto" type="file" accept="image/*"></label>
+          <div class="row" style="align-self:end"><button class="btn fly" type="submit" id="repGo">Post report</button></div>
         </form>
-        <p class="small muted">Flow, water temp and sky from the gauge and forecast are attached automatically.</p>
-      </div>
+        <p class="small muted">Flow, water temp and sky are added for you.</p>
+        <span class="hidden" id="crewWho"></span>
+      </div></details>
       <div class="row">
-        <label class="f" for="feedRiver">Water<select id="feedRiver"></select></label>
-        <label class="f" for="feedType">Show<select id="feedType"><option value="">Reports and catches</option><option value="report">Reports</option><option value="catch">Catches</option></select></label>
-        <button class="btn ghost" id="feedRefresh" type="button" style="align-self:end">Refresh</button>
+        <select id="feedRiver" aria-label="Filter by water" style="flex:1"></select>
+        <select id="feedType" aria-label="Filter by type"><option value="">Everything</option><option value="report">Reports</option><option value="catch">Catches</option></select>
+        <button class="btn ghost small" id="feedRefresh" type="button" aria-label="Refresh">Refresh</button>
       </div>
       <div id="feed" class="stack"></div>
-      <p class="small muted">Signed in as <span id="crewName2"></span>. <a href="#crew" id="crewLeave">Switch person</a></p>
+      <p class="small muted">You're posting as <span id="crewName2"></span>. <a href="#crew" id="crewLeave">Not you?</a></p>
     </div>
   </section>
 
   <!-- LOG -->
   <section class="view" id="v-log">
-    <div><h2>Catch log</h2><p class="lede">Log a fish and Driftline saves the flow, water temp, weather and moon phase with it. Over a season it shows the conditions you catch fish in.</p></div>
-    <div class="card stack">
-      <h3>Log a fish</h3>
+    <div><h2>Crew</h2><p class="lede">Every fish, with the flow, temp, weather and moon it came on.</p></div>
+    <nav class="seg crewSeg" aria-label="Crew view"><a href="#crew">Reports</a><a href="#log" aria-current="true">Catch log</a></nav>
+    <details class="fold" id="logFold"><summary>Log a fish</summary><div class="body">
       <form class="form" id="logForm">
         <label class="f" for="lgDate">Date<input id="lgDate" type="date" required></label>
-        <label class="f" for="lgRiver">River<select id="lgRiver"></select></label>
-        <label class="f" for="lgSpecies">Species<select id="lgSpecies"><option>Redband rainbow</option><option>Brown trout</option><option>Bull trout</option><option>Cutthroat</option><option>Brook trout</option><option>Whitefish</option><option>Steelhead</option><option>Other</option></select></label>
-        <label class="f" for="lgLen">Length (in)<input id="lgLen" type="number" step="0.5" min="1" max="45"></label>
+        <label class="f" for="lgRiver">Water<select id="lgRiver"></select></label>
+        <label class="f" for="lgSpecies">Species<select id="lgSpecies"><option>Redband rainbow</option><option>Brown trout</option><option>Bull trout</option><option>Cutthroat</option><option>Brook trout</option><option>Atlantic salmon</option><option>Kokanee</option><option>Whitefish</option><option>Steelhead</option><option>Other</option></select></label>
+        <label class="f" for="lgLen">Length (in)<input id="lgLen" type="number" inputmode="decimal" step="0.5" min="1" max="45"></label>
         <label class="f" for="lgFly">Fly<input id="lgFly" list="flyNames" placeholder="Pheasant Tail #16"></label>
-        <label class="f" for="lgSky">Sky<select id="lgSky"><option value="">From forecast</option><option value="clear">Bluebird</option><option value="partly">Partly cloudy</option><option value="overcast">Overcast</option><option value="rain">Rain</option></select></label>
-        <label class="f" for="lgCfs">Flow (CFS)<input id="lgCfs" type="number" placeholder="From gauge"></label>
-        <label class="f" for="lgWt">Water temp (°F)<input id="lgWt" type="number" placeholder="From gauge"></label>
-        <label class="f" for="lgNotes" style="grid-column:1/-1">Notes<textarea id="lgNotes" rows="2" placeholder="Tailout below the riffle, fish rising to cripples"></textarea></label>
-        <label class="f hidden crewOnly" for="lgPhoto">Photo (optional)<input id="lgPhoto" type="file" accept="image/*"></label>
-        <div class="row"><button class="btn" type="submit" id="logGo">Save catch</button><span class="small muted" id="logStore"></span></div>
+        <label class="f hidden crewOnly" for="lgPhoto">Photo<input id="lgPhoto" type="file" accept="image/*"></label>
+        <label class="f full" for="lgNotes">Notes<textarea id="lgNotes" rows="2" placeholder="Tailout below the riffle, rising to cripples"></textarea></label>
+        <details class="full"><summary class="small">Conditions (filled in from the gauge)</summary><div class="form" style="margin-top:10px">
+          <label class="f" for="lgSky">Sky<select id="lgSky"><option value="">From forecast</option><option value="clear">Bluebird</option><option value="partly">Partly cloudy</option><option value="overcast">Overcast</option><option value="rain">Rain</option></select></label>
+          <label class="f" for="lgCfs">Flow (CFS)<input id="lgCfs" type="number" inputmode="numeric" placeholder="From gauge"></label>
+          <label class="f" for="lgWt">Water temp (°F)<input id="lgWt" type="number" inputmode="numeric" placeholder="From gauge"></label>
+        </div></details>
+        <div class="row full"><button class="btn fly" type="submit" id="logGo">Save catch</button><span class="small muted" id="logStore"></span></div>
       </form>
       <datalist id="flyNames"></datalist>
-    </div>
-    <div class="row hidden crewOnly"><label class="f" for="logScope">Show<select id="logScope"><option value="all">The whole crew</option><option value="me">Just me</option></select></label></div>
+    </div></details>
+    <div class="seg hidden crewOnly" role="group" aria-label="Whose catches"><a href="#log" data-scope="all" aria-current="true">Whole crew</a><a href="#log" data-scope="me">Just me</a></div>
+    <select id="logScope" class="hidden" aria-hidden="true"><option value="all">all</option><option value="me">me</option></select>
     <div class="cols" id="logStats"></div>
-    <div class="card stack">
-      <div class="row"><h3>Entries</h3><button class="btn ghost" id="copyCsv" type="button">Copy as CSV</button></div>
+    <details class="fold"><summary>Every catch</summary><div class="body">
       <div class="scroll"><table id="logTable"></table></div>
+      <div><button class="btn ghost small" id="copyCsv" type="button">Copy as spreadsheet text</button></div>
+    </div></details>
+  </section>
+
+  <!-- MORE -->
+  <section class="view" id="v-more">
+    <div><h2>More</h2></div>
+    <div class="menu">
+      <a href="#guide" id="moreGuide"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg></i><div><b>Ask a guide</b><span>Rigging, reading water, where to start</span></div></a>
+      <a href="#trip"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></i><div><b>Trip planner</b><span>Forecast, flies and a pack list to share</span></div></a>
+      <a href="#hatches"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="3.5" width="5" height="5" rx="1"/><rect x="9.5" y="3.5" width="5" height="5" rx="1" fill="currentColor"/><rect x="15.5" y="3.5" width="5" height="5" rx="1"/><rect x="3.5" y="9.5" width="5" height="5" rx="1" fill="currentColor"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><rect x="15.5" y="9.5" width="5" height="5" rx="1" fill="currentColor"/></svg></i><div><b>Hatch calendar</b><span>What hatches when, by water</span></div></a>
+      <a href="#learn"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3c0 6 12 6 12 12 0 3-3 6-6 6s-6-3-6-6c0-6 12-6 12-12"/></svg></i><div><b>Knots and rigs</b><span>Six knots, five rigs, tippet chart</span></div></a>
+      <a href="#map"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z"/><path d="M9 4v14M15 6v14"/></svg></i><div><b>Map</b><span>Every water at a glance</span></div></a>
+    </div>
+    <div class="menu">
+      <div class="mi"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg></i><div style="flex:1"><b>Appearance</b><span>Light, dark or match your phone</span></div>
+        <select id="themeSel" aria-label="Appearance"><option value="">Auto</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
+      <a href="#crew"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6 8-6s7.2 2 8 6"/></svg></i><div><b id="moreCrewName">Join the crew</b><span id="moreCrewSub">Share reports with your friends</span></div></a>
+      <a href="#install" id="moreInstall"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M12 7v7M9 11l3 3 3-3"/></svg></i><div><b>Add to Home Screen</b><span>Open Driftline like an app</span></div></a>
+    </div>
+    <p class="small muted" style="text-align:center">Flows from USGS. Weather from Open-Meteo. Always check current regulations before you fish.</p>
+  </section>
+
+  <!-- INSTALL -->
+  <section class="view" id="v-install">
+    <a class="back" href="#more">‹ More</a>
+    <div class="card stack" id="installHow"></div>
+  </section>
+
+  <!-- HATCHES -->
+  <section class="view" id="v-hatches">
+    <div><a class="back" href="#more">‹ More</a><h2>Hatch calendar</h2><p class="lede">Darker cells mean heavier hatches. The outlined column is this month.</p></div>
+    <select id="hatchRiver" aria-label="Water"></select>
+    <div class="card scroll" style="padding:10px"><table class="heat" id="heat"></table></div>
+    <div class="grid" id="bugCards"></div>
+  </section>
+
+  <!-- GUIDE -->
+  <section class="view" id="v-guide">
+    <div><a class="back" href="#more">‹ More</a><h2>Ask a guide</h2><p class="lede">Answers use today's flows, hatches and your crew's recent reports.</p></div>
+    <div class="card stack" id="guideCard">
+      <div class="chat" id="chat"></div>
+      <div class="row small" id="guideStarters"></div>
+      <form class="row" id="chatForm"><input id="chatIn" style="flex:1" placeholder="How should I fish the Crooked this week?" aria-label="Your question"><button class="btn" type="submit">Ask</button></form>
+      <p class="muted small hidden" id="guideOff">Ask a guide is for crew members. <a href="#crew">Join the crew</a> with the crew code to use it.</p>
     </div>
   </section>
 
   <!-- TRIP -->
   <section class="view" id="v-trip">
-    <div><h2>Trip planner</h2><p class="lede">Choose a river and dates. You get the conditions, forecast, flies, access, rules and a packing list on one page you can copy into a group text.</p></div>
+    <div><a class="back" href="#more">‹ More</a><h2>Trip planner</h2><p class="lede">Conditions, forecast, flies and a pack list you can copy into the group text.</p></div>
     <div class="card"><form class="form" id="tripForm">
-      <label class="f" for="tpRiver">River<select id="tpRiver"></select></label>
+      <label class="f" for="tpRiver">Water<select id="tpRiver"></select></label>
       <label class="f" for="tpDate">Start date<input id="tpDate" type="date"></label>
       <label class="f" for="tpDays">Days<select id="tpDays"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
       <label class="f" for="tpStyle">Style<select id="tpStyle"><option value="wade">Wade</option><option value="float">Float</option></select></label>
-      <label class="f" for="tpLevel">Group level<select id="tpLevel"><option value="mixed">Mixed</option><option value="new">Mostly new anglers</option><option value="skilled">Experienced</option></select></label>
+      <label class="f" for="tpLevel">Group<select id="tpLevel"><option value="mixed">Mixed</option><option value="new">Mostly new</option><option value="skilled">Experienced</option></select></label>
     </form></div>
     <div id="tripOut" class="stack"></div>
   </section>
 
   <!-- LEARN -->
   <section class="view" id="v-learn">
-    <div><h2>Knots, rigs and fundamentals</h2><p class="lede">The knots that cover most days on the water, the five rigs worth knowing, and the tippet chart.</p></div>
+    <div><a class="back" href="#more">‹ More</a><h2>Knots and rigs</h2></div>
     <h3>Rigs</h3>
     <div class="grid" id="rigs"></div>
     <h3>Knots</h3>
     <div class="grid" id="knots"></div>
-    <div class="cols">
-      <div class="card"><h3>Tippet chart</h3><p class="muted small">Quick rule: hook size divided by 3 is about the X rating to use.</p><div class="scroll"><table id="tippet"></table></div></div>
-      <div class="card stack" id="fundamentals"></div>
-    </div>
-  </section>
-
-  <!-- MAP -->
-  <section class="view" id="v-map">
-    <div><h2>Map</h2><p class="lede">This is a schematic of Central and Southern Oregon waters with gauge dots colored by current flow. Tap a dot to open the river. Use the Google Maps links on each river page for driving directions.</p></div>
-    <div class="card scroll" style="display:grid;justify-items:center"><svg id="mapSvg" role="img" aria-label="Schematic map of Oregon rivers in Driftline"></svg></div>
+    <div class="card"><h3>Tippet chart</h3><p class="muted small">Quick rule: hook size divided by 3 is about the X rating.</p><div class="scroll"><table id="tippet"></table></div></div>
+    <div class="card stack" id="fundamentals"></div>
   </section>
 </main>
+
 
 <script>
 "use strict";
@@ -666,130 +822,136 @@ const pill=(o)=>o?`<span class="pill ${o.k}"><span class="dot"></span>${esc(o.la
 const fmt=(v,d=0)=>v==null?"—":Number(v).toLocaleString(undefined,{maximumFractionDigits:d});
 const skyWord={clear:"Bluebird",partly:"Partly cloudy",overcast:"Overcast",rain:"Rain"};
 function flyRow(c){const s=sizeMid(c.f.sizes);return `<div class="fly"><div><b>${esc(c.f.name)}</b> <span class="num muted">#${esc(c.f.sizes)}</span><div class="small muted">${esc(c.f.tip)}</div></div><div class="small num muted" title="Suggested tippet">${tippetFor(s)}</div></div>`}
-function recBlock(r,rec){
+function recBlock(r,rec,opts={}){
   return `<div class="card stack">
-    <div class="row"><h3>${esc(rLabel(r))}</h3></div>
-    <div>${rec.top.length?rec.top.map(t=>`<span class="chip">${esc(BUGS[t.b].name)} ${"●".repeat(Math.min(3,Math.max(1,Math.round(t.s))))}</span>`).join(""):'<span class="muted small">No hatches on the calendar this month.</span>'}</div>
+    ${opts.noTitle?"":`<h3>${esc(rLabel(r))}</h3>`}
+    <div>${rec.top.length?rec.top.map(t=>`<span class="chip">${esc(BUGS[t.b].name)}</span>`).join(""):'<span class="muted small">No hatches on the calendar this month.</span>'}</div>
     <div class="note"><b>${esc(rec.rig)}.</b> ${esc(rec.why)}</div>
     <div class="cols">
-      <div><h3 class="small muted">DRIES AND EMERGERS</h3><div class="flylist">${rec.dries.map(flyRow).join("")||'<span class="muted small">Skip dries today.</span>'}</div></div>
-      <div><h3 class="small muted">NYMPHS</h3><div class="flylist">${rec.nymphs.map(flyRow).join("")}</div></div>
-      <div><h3 class="small muted">STREAMER</h3><div class="flylist">${rec.streamers.slice(0,2).map(flyRow).join("")}</div></div>
-    </div></div>`;
+      <div class="stack"><h3>Dries</h3><div class="flylist">${rec.dries.map(flyRow).join("")||'<span class="muted small">Skip dries today.</span>'}</div></div>
+      <div class="stack"><h3>Nymphs</h3><div class="flylist">${rec.nymphs.map(flyRow).join("")}</div></div>
+      <div class="stack"><h3>Streamer</h3><div class="flylist">${rec.streamers.slice(0,2).map(flyRow).join("")}</div></div>
+    </div>
+    <p class="small muted" style="margin:0">The X number on each fly is the tippet to start with.</p></div>`;
 }
-function sparkline(pts,w=260,h=54){
+function sparkline(pts,w=260,h=54,o={}){
   if(!pts||pts.length<2)return "";
+  const stroke=o.stroke||"var(--river)",fill=o.fill||"var(--river-soft)",dotc=o.dot||"var(--fly)";
   const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
-  const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);const pad=(y1-y0)*0.15||1;
+  const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);const pad=(y1-y0)*0.25||1;
   const X=x=>((x-x0)/(x1-x0||1))*(w-8)+4,Y=y=>h-4-((y-(y0-pad))/((y1+pad)-(y0-pad)))*(h-8);
   const step=Math.max(1,Math.floor(pts.length/120));const p=pts.filter((_,i)=>i%step===0||i===pts.length-1);
   const d=p.map((q,i)=>(i?"L":"M")+X(q[0]).toFixed(1)+" "+Y(q[1]).toFixed(1)).join(" ");
   const last=p[p.length-1];
-  return `<svg width="100%" viewBox="0 0 ${w} ${h}" role="img" aria-label="Flow over the last 7 days, from ${fmt(y0)} to ${fmt(y1)} CFS">
-   <path d="${d} L ${X(last[0])} ${h} L ${X(p[0][0])} ${h} Z" fill="var(--river-soft)"/><path d="${d}" fill="none" stroke="var(--river)" stroke-width="1.8"/>
-   <circle cx="${X(last[0])}" cy="${Y(last[1])}" r="3.2" fill="var(--hackle)"/>
-   <text x="4" y="11" font-size="10" fill="var(--muted)">${fmt(y1)}</text><text x="4" y="${h-6}" font-size="10">${fmt(y0)}</text></svg>`;
+  return `<svg width="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Flow over the last 7 days, from ${fmt(y0)} to ${fmt(y1)} CFS" ${o.cls?`class="${o.cls}"`:""}>
+   <path d="${d} L ${X(last[0])} ${h} L ${X(p[0][0])} ${h} Z" fill="${fill}"/><path d="${d}" fill="none" stroke="${stroke}" stroke-width="2" vector-effect="non-scaling-stroke"/>
+   ${o.noDot?"":`<circle cx="${X(last[0])}" cy="${Y(last[1])}" r="3.5" fill="${dotc}"/>`}</svg>`;
 }
+const WAVE=`<svg class="wave" viewBox="0 0 400 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C 60 20, 110 60, 170 40 S 290 18, 400 38 V70 H0Z" fill="rgba(255,255,255,.08)"/><path d="M0 52 C 70 36, 130 70, 200 52 S 320 36, 400 50 V70 H0Z" fill="rgba(255,255,255,.07)"/></svg>`;
 
-/* ---------- TODAY ---------- */
-function renderToday(){
+/* ---------- HOME ---------- */
+let RANKED=[];
+function rankAll(){
   const month=new Date().getMonth();const t=timeOfDay();
-  $("#todayTitle").textContent="Where to fish today, "+new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
-  const ranked=RIVERS.map(r=>{const c=conditions(r);const ctx={month,wtF:c.wtF,sky:c.sky||"partly",time:t,flowK:flowKey(r,c.cfs),cfs:c.cfs,wind:c.wind};return {r,c,ctx,score:riverScore(r,ctx),rec:recommend(r,ctx)}}).sort((a,b)=>b.score-a.score);
-  const best=ranked[0];
-  $("#todayLede").textContent=`Ranked by what's hatching in ${MONTHS[month]}, the current flow, water temp and wind. Best bet right now: ${rLabel(best.r)}, where you'll find ${best.rec.top[0]?BUGS[best.rec.top[0].b].name.toLowerCase():"fish eating nymphs"}.`;
-  $("#todayGrid").innerHTML=ranked.map((x,i)=>riverCard(x.r,x.c,x.rec,i+1)).join("");
-  // region flies
+  RANKED=RIVERS.map(r=>{const c=conditions(r);const ctx={month,wtF:c.wtF,sky:c.sky||"partly",time:t,flowK:flowKey(r,c.cfs),cfs:c.cfs,wind:c.wind};return {r,c,ctx,score:riverScore(r,ctx),rec:recommend(r,ctx)}}).sort((a,b)=>b.score-a.score);
+  return RANKED;
+}
+function heroHTML(x,{label="Best bet right now",withLink=true}={}){
+  const {r,c,rec}=x;const rf=rateFlow(r,c.cfs);const rt=rateTemp(c.wtF);
+  const h=COND[r.id]?.hist;
+  const flies=[rec.dries[0],rec.nymphs[0],rec.streamers[0]].filter(Boolean).slice(0,3);
+  return `${Array.isArray(h)?`<div class="wave" style="height:90px;opacity:.55">${sparkline(h,400,90,{stroke:"rgba(255,255,255,.75)",fill:"rgba(255,255,255,.10)",noDot:true})}</div>`:WAVE}
+   <div class="row" style="justify-content:space-between"><span class="tag">${esc(label)}</span>${pill(rt&&rt.k==="bad"?rt:rf)}</div>
+   <div style="position:relative"><h2>${esc(r.name)}</h2><div class="sec">${esc(r.section)}${rec.top[0]?` · ${esc(BUGS[rec.top[0].b].name)} on the calendar`:""}</div></div>
+   <div class="reads" style="position:relative">
+     <div><b>${r.lake?"Lake":fmt(c.cfs)}</b><span>${r.lake?"no gauge":"cfs"}</span></div>
+     <div><b>${c.wtF==null?"—":fmt(c.wtF)+"°"}</b><span>water</span></div>
+     <div><b>${c.airF==null?"—":fmt(c.airF)+"°"}</b><span>${c.wind!=null?fmt(c.wind)+" mph wind":"air"}</span></div>
+   </div>
+   <div class="flies">${flies.map(f=>`<span>${esc(f.f.name)} #${esc(f.f.sizes)}</span>`).join("")}</div>`;
+}
+function renderToday(){renderHome()}
+function renderHome(){
+  const now=new Date();const h=now.getHours();
+  $("#greet").textContent=(h<12?"Good morning":h<17?"Good afternoon":"Good evening")+(crewMode()?", "+CREW.name:"");
+  $("#greetSub").textContent=now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})+" · "+MONTHS[now.getMonth()]+" hatches";
+  const ranked=rankAll();const best=ranked[0];
+  const hero=$("#heroCard");hero.href="#river-"+best.r.id;hero.innerHTML=heroHTML(best);
+  if(best.r.gauge&&!COND[best.r.id]?.hist&&LIVE.state==="on"){COND[best.r.id].hist="loading";fetchHistory(best.r.gauge).then(p=>{COND[best.r.id].hist=p||"none";if(location.hash===""||location.hash==="#home")hero.innerHTML=heroHTML(best)})}
+  $("#todayGrid").innerHTML=ranked.slice(1,6).map((x,i)=>riverCard(x.r,x.c,x.rec,i+2)).join("");
   const tally={};
   ranked.slice(0,5).forEach(x=>[...x.rec.dries,...x.rec.nymphs].forEach(c=>{tally[c.f.name]=(tally[c.f.name]||0)+1+c.s}));
-  const tops=Object.entries(tally).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([n])=>FLIES.find(f=>f.name===n));
-  $("#regionFlyNote").textContent="These patterns show up most across the five best-ranked rivers today.";
+  const tops=Object.entries(tally).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([n])=>FLIES.find(f=>f.name===n));
+  $("#regionFlyNote").textContent="The patterns that come up most on the best waters today.";
   $("#regionFlies").innerHTML=tops.map(f=>flyRow({f})).join("");
-  bindCards("#todayGrid");
+  const hc=$("#homeCrew");
+  if(crewMode()){const it=CREW.items.slice(0,2);hc.innerHTML=`<div class="section-h"><h3>From the crew</h3><a href="#crew">See all</a></div>`+(it.length?it.map(feedItem).join(""):`<div class="card small muted">No posts yet. <a href="#report-new">Post the first report</a>.</div>`);bindDel("#homeCrew")}
+  else if(CREW.ok)hc.innerHTML=`<a class="card install" href="#crew" style="text-decoration:none;color:inherit"><div class="avatar" style="width:46px;height:46px">+</div><div><b>Fishing with friends?</b><div class="small muted">Join the crew to share reports and catches.</div></div></a>`;
+  else hc.innerHTML="";
   renderWeekend(ranked.map(x=>x.r));
+  renderInstallCard();
 }
 function riverCard(r,c,rec,rank){
   const rf=rateFlow(r,c.cfs);const rt=rateTemp(c.wtF);
-  const stripe=rt&&rt.k==="bad"?"bad":rf.k;
-  return `<div class="card rcard" role="link" tabindex="0" data-river="${esc(r.id)}">
-    <span class="stripe ${stripe}"></span>
-    <div class="row" style="justify-content:space-between">
-      <div>${rank?`<span class="rank">#${rank}</span> `:""}<b>${esc(r.name)}</b><div class="small muted">${esc(r.section)}</div></div>
-      ${pill(rf)}
-    </div>
-    <div class="readout">
-      <div><b>${fmt(c.cfs)}</b><span>CFS${c.source.flow==="manual"?" · yours":""}</span></div>
-      <div><b>${c.wtF==null?"—":fmt(c.wtF)+"°"}</b><span>Water${c.source.temp==="manual"?" · yours":""}</span></div>
-      <div><b>${c.airF==null?"—":fmt(c.airF)+"°"}</b><span>Air${c.wind!=null?" · "+fmt(c.wind)+" mph":""}</span></div>
-    </div>
-    ${rt&&rt.k==="bad"?pill(rt):""}
-    ${crewChip(r)}
-    <div class="small">${rec.top.slice(0,3).map(t=>`<span class="chip">${esc(BUGS[t.b].name)}</span>`).join("")||'<span class="muted">Nymph it. No hatches on the calendar.</span>'}</div>
-    <div class="small muted">Tie on: ${esc([rec.dries[0],rec.nymphs[0]].filter(Boolean).map(x=>x.f.name+" #"+x.f.sizes).join(", "))}</div>
-  </div>`;
+  const st=rt&&rt.k==="bad"?"bad":rf.k;const p=rt&&rt.k==="bad"?rt:rf;
+  const vals=[r.lake?"":(c.cfs!=null?fmt(c.cfs)+" cfs":""),c.wtF!=null?fmt(c.wtF)+"° water":""].filter(Boolean).join(" · ");
+  const bugs=rec.top.slice(0,2).map(t=>BUGS[t.b].name).join(", ");
+  const cc=crewChip(r);
+  return `<a class="rrow" href="#river-${esc(r.id)}">
+    <span class="st ${st}"></span>
+    <div><div class="nm">${rank?`<span class="rk">${rank}</span>`:""}${esc(r.name)}</div><div class="sc">${esc(r.section)}</div>${bugs?`<div class="bugs">${esc(bugs)}</div>`:""}${cc}</div>
+    <div class="rt">${pill(p)}${vals?`<span class="v">${vals}</span>`:""}</div>
+  </a>`;
 }
 function bindCards(sel){$$(sel+" [data-river]").forEach(el=>{const go=()=>{location.hash="river-"+el.dataset.river};el.onclick=go;el.onkeydown=e=>{if(e.key==="Enter")go()}})}
 
 /* ---------- RIVERS ---------- */
 function renderRivers(){
   const month=new Date().getMonth();
-  $("#riverGrid").innerHTML=RIVERS.map(r=>{const c=conditions(r);return riverCard(r,c,recommend(r,{month,wtF:c.wtF,sky:c.sky||"partly",time:timeOfDay(),flowK:flowKey(r,c.cfs)}))}).join("");
-  bindCards("#riverGrid");
+  const card=r=>{const c=conditions(r);return riverCard(r,c,recommend(r,{month,wtF:c.wtF,sky:c.sky||"partly",time:timeOfDay(),flowK:flowKey(r,c.cfs)}))};
+  const rivers=RIVERS.filter(r=>!r.lake),lakes=RIVERS.filter(r=>r.lake);
+  $("#riverGrid").innerHTML=`<div class="list-h">Rivers</div>`+rivers.map(card).join("")+(lakes.length?`<div class="list-h">Lakes</div>`+lakes.map(card).join(""):"");
 }
 async function renderRiver(id){
   const r=riverById(id);const el=$("#v-river");
-  if(!r){el.innerHTML=`<div class="card">That river isn't in Driftline. <a href="#rivers">Back to rivers</a></div>`;return}
+  if(!r){el.innerHTML=`<a class="back" href="#rivers">‹ Waters</a><div class="card">That water isn't in Driftline.</div>`;return}
   const c=conditions(r);const month=new Date().getMonth();
   const ctx={month,wtF:c.wtF,sky:c.sky||"partly",time:timeOfDay(),flowK:flowKey(r,c.cfs)};
-  const rec=recommend(r,ctx);const rf=rateFlow(r,c.cfs);const m=manual(r.id)||{};
-  const wx=c.wx?.daily;
+  const rec=recommend(r,ctx);const m=manual(r.id)||{};
+  const wx=c.wx?.daily;const x={r,c,rec};
+  const crewIt=crewMode()?crewItemsFor(r.id,120).slice(0,4):[];
   el.innerHTML=`
-   <div><a href="#rivers" class="small">← All rivers</a><h2>${esc(r.name)} <span class="muted" style="font-weight:500">${esc(r.section)}</span></h2><p class="lede">${esc(r.about)}</p></div>
-   <div class="cols">
-    <div class="card stack">
-      <div class="row" style="justify-content:space-between"><h3>Conditions</h3>${pill(rf)}</div>
-      <div class="readout">
-        <div><b>${fmt(c.cfs)}</b><span>CFS</span></div>
-        <div><b>${c.wtF==null?"—":fmt(c.wtF)+"°F"}</b><span>Water</span></div>
-        <div><b>${c.sky?esc(skyWord[c.sky]):"—"}</b><span>Sky</span></div>
-      </div>
-      ${rateTemp(c.wtF)?pill(rateTemp(c.wtF)):""}
-      <div id="spark" class="small muted">${r.gauge?"Loading the 7-day flow…":""}</div>
-      <div class="small muted">${r.gauge?`Gauge: ${esc(r.gaugeName||"USGS "+r.gauge)} (<span class="num">${esc(r.gauge)}</span>).`:"Lakes have no flow gauge."} ${r.flow.idealLo!=null?`Fishable range about <span class="num">${fmt(r.flow.idealLo)}–${fmt(r.flow.idealHi)}</span> CFS.`:""} ${c.time?"Reading from "+new Date(c.time).toLocaleString():""}</div>
-      <details ${c.source.flow==="live"||r.lake?"":"open"}><summary>Enter your own reading</summary>
-        <form class="form" id="manForm" style="margin-top:8px">
-          <label class="f" for="mCfs">Flow (CFS)<input id="mCfs" type="number" value="${esc(m.cfs??"")}"></label>
-          <label class="f" for="mWt">Water temp (°F)<input id="mWt" type="number" value="${esc(m.wtF??"")}"></label>
-          <label class="f" for="mSky">Sky<select id="mSky">${Object.entries(skyWord).map(([k,v])=>`<option value="${k}" ${m.sky===k?"selected":""}>${v}</option>`).join("")}</select></label>
-          <div class="row" style="align-self:end"><button class="btn" type="submit">Save reading</button></div>
-        </form>
-        <p class="small muted">Saved readings stay on this device for 36 hours and feed every recommendation.</p>
-      </details>
-    </div>
-    <div class="card stack">
-      <h3>Weather</h3>
-      ${wx?`<div class="scroll"><table><tr><th>Day</th><th>High/Low</th><th>Rain</th><th>Wind</th></tr>${wx.time.map((d,i)=>`<tr><td>${new Date(d+"T12:00").toLocaleDateString(undefined,{weekday:"short"})}</td><td class="num">${fmt(wx.temperature_2m_max[i])}° / ${fmt(wx.temperature_2m_min[i])}°</td><td class="num">${fmt(wx.precipitation_probability_max[i])}%</td><td class="num">${fmt(wx.wind_speed_10m_max[i])} mph</td></tr>`).join("")}</table></div>`:`<p class="muted small">The forecast loads when Driftline runs on a regular web host.</p>`}
-      <div class="small"><a href="https://www.google.com/maps/search/?api=1&query=${r.lat},${r.lon}" target="_blank" rel="noopener">Open in Google Maps</a>${r.gauge?` · <a href="https://waterdata.usgs.gov/monitoring-location/USGS-${esc(r.gauge)}/" target="_blank" rel="noopener">USGS gauge page</a>`:""}</div>
-    </div>
-   </div>
-   ${recBlock(r,rec)}
-   ${crewMode()?`<div class="card stack"><div class="row" style="justify-content:space-between"><h3>Crew on this water</h3><a class="small" href="#crew">Post a report</a></div>${(()=>{const it=crewItemsFor(r.id,120).slice(0,5);return it.length?it.map(feedItem).join(""):'<p class="small muted">Nobody in the crew has posted here in the last four months.</p>'})()}</div>`:""}
-   <div class="card scroll"><h3>Hatch chart</h3>${heatTable(r)}</div>
-   <div class="cols">
-     <div class="card stack"><h3>Access</h3>${r.access.length?`<ul>${r.access.map(a=>`<li>${esc(a)}</li>`).join("")}</ul>`:'<p class="muted small">Add your own access notes in the catch log.</p>'}
-       ${r.floats.length?`<h3>Floats</h3><ul>${r.floats.map(a=>`<li>${esc(a)}</li>`).join("")}</ul><p class="small muted">Mileage is approximate. Ask a shop about current hazards.</p>`:""}</div>
-     <div class="card stack"><h3>Regulations</h3><p>${esc(r.regs)}</p><p class="small muted">This is a summary. Read the current rules before you fish: <a href="https://myodfw.com/fishing/regulations" target="_blank" rel="noopener">ODFW fishing regulations</a>.</p>
-       <h3>Species</h3><div>${r.species.map(s=>`<span class="chip">${esc(s)}</span>`).join("")}</div></div>
-     <div class="card stack"><h3>Fly shops</h3>${r.shops.length?`<ul>${r.shops.map(s=>`<li>${esc(s)}</li>`).join("")}</ul><p class="small muted">Call ahead for the latest report and hours.</p>`:'<p class="muted small">No shops listed yet.</p>'}
-       ${r.custom?`<button class="btn ghost" id="rmRiver" type="button">Remove this river</button>`:""}</div>
-   </div>`;
+   <a class="back" href="#rivers">‹ Waters</a>
+   <div class="hero hero-river" id="riverHero">${heroHTML(x,{label:r.lake?"Lake":"Right now"})}</div>
+   <p class="lede" style="margin:0">${esc(r.about)}</p>
+   <div class="stack"><h3>What to tie on</h3>${recBlock(r,rec,{noTitle:true})}</div>
+   ${crewMode()?`<div class="stack"><div class="section-h"><h3>Crew on this water</h3><a href="#report-new">Post a report</a></div>${crewIt.length?crewIt.map(feedItem).join(""):'<div class="card small muted">Nobody in the crew has posted here in the last four months.</div>'}</div>`:""}
+   ${wx?`<div class="card stack"><h3>Forecast</h3><div class="scroll"><table><tr><th>Day</th><th>High / low</th><th>Rain</th><th>Wind</th></tr>${wx.time.map((d,i)=>`<tr><td>${new Date(d+"T12:00").toLocaleDateString(undefined,{weekday:"short"})}</td><td class="num">${fmt(wx.temperature_2m_max[i])}° / ${fmt(wx.temperature_2m_min[i])}°</td><td class="num">${fmt(wx.precipitation_probability_max[i])}%</td><td class="num">${fmt(wx.wind_speed_10m_max[i])} mph</td></tr>`).join("")}</table></div></div>`:""}
+   <details class="fold"><summary>Hatch chart</summary><div class="body scroll">${heatTable(r)}</div></details>
+   <details class="fold"><summary>Access, rules and shops</summary><div class="body">
+     ${r.access.length?`<div><b>Access</b><ul>${r.access.map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div>`:""}
+     ${r.floats.length?`<div><b>Floats</b><ul>${r.floats.map(a=>`<li>${esc(a)}</li>`).join("")}</ul><p class="small muted">Mileage is approximate. Ask a shop about hazards.</p></div>`:""}
+     <div><b>Rules</b><p style="margin:4px 0">${esc(r.regs)}</p><p class="small muted" style="margin:0">A summary only. Read the <a href="https://myodfw.com/fishing/regulations" target="_blank" rel="noopener">current ODFW regulations</a> before you fish.</p></div>
+     <div><b>Species</b><div>${r.species.map(s=>`<span class="chip">${esc(s)}</span>`).join("")}</div></div>
+     ${r.shops.length?`<div><b>Fly shops</b><ul>${r.shops.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>`:""}
+     <div class="row small"><a href="https://www.google.com/maps/search/?api=1&query=${r.lat},${r.lon}" target="_blank" rel="noopener">Directions</a>${r.gauge?`<a href="https://waterdata.usgs.gov/monitoring-location/USGS-${esc(r.gauge)}/" target="_blank" rel="noopener">USGS gauge ${esc(r.gauge)}</a>`:""}</div>
+     ${r.custom?`<button class="btn ghost" id="rmRiver" type="button">Remove this river</button>`:""}
+   </div></details>
+   <details class="fold" ${c.source.flow!=="live"&&!r.lake&&LIVE.state==="off"?"open":""}><summary>Enter your own reading</summary><div class="body">
+     <form class="form" id="manForm">
+       <label class="f" for="mCfs">Flow (CFS)<input id="mCfs" type="number" inputmode="numeric" value="${esc(m.cfs??"")}"></label>
+       <label class="f" for="mWt">Water temp (°F)<input id="mWt" type="number" inputmode="numeric" value="${esc(m.wtF??"")}"></label>
+       <label class="f" for="mSky">Sky<select id="mSky">${Object.entries(skyWord).map(([k,v])=>`<option value="${k}" ${m.sky===k?"selected":""}>${v}</option>`).join("")}</select></label>
+       <div class="row" style="align-self:end"><button class="btn" type="submit">Save reading</button></div>
+     </form>
+     <p class="small muted" style="margin:0">Your reading stays on this phone for 36 hours and is used for recommendations when the gauge has none.</p>
+   </div></details>`;
   bindDel("#v-river");
   $("#manForm").onsubmit=e=>{e.preventDefault();setManual(r.id,{cfs:$("#mCfs").value,wtF:$("#mWt").value,sky:$("#mSky").value});toast("Reading saved");renderRiver(id)};
   const rm=$("#rmRiver");if(rm)rm.onclick=()=>{store.set("custom",store.get("custom",[]).filter(x=>x.id!==r.id));loadRivers();fillSelects();location.hash="rivers"};
-  if(r.gauge){
-    if(!COND[r.id]?.hist&&LIVE.state!=="off"){COND[r.id]=COND[r.id]||{};COND[r.id].hist=await fetchHistory(r.gauge)||"none"}
-    const h=COND[r.id]?.hist;const sp=$("#spark");
-    if(sp&&location.hash==="#river-"+id)sp.innerHTML=Array.isArray(h)?"<div class='small muted'>Last 7 days</div>"+sparkline(h):(LIVE.state==="off"?"":"No 7-day history from this gauge.");
+  if(r.gauge&&!Array.isArray(COND[r.id]?.hist)&&COND[r.id]?.hist!=="none"&&LIVE.state!=="off"){
+    COND[r.id]=COND[r.id]||{};COND[r.id].hist=await fetchHistory(r.gauge)||"none";
+    const hh=$("#riverHero");if(hh&&location.hash==="#river-"+id)hh.innerHTML=heroHTML(x,{label:"Right now"});
   }
 }
 function addGaugeSubmit(e){
@@ -1044,11 +1206,11 @@ const RIGS=[
 function rigSVG(rig){
   const W=260;let y=26;const items=[];const surface=rig.parts.some(p=>p[0]==="dry"||p[0]==="indicator")?72:40;
   items.push(`<line x1="0" x2="${W}" y1="${surface}" y2="${surface}" stroke="var(--river)" stroke-dasharray="4 4" opacity=".6"/><text x="${W-4}" y="${surface-4}" text-anchor="end" font-size="10" fill="var(--muted)">surface</text>`);
-  items.push(`<line x1="40" x2="40" y1="8" y2="26" stroke="var(--hackle)" stroke-width="3"/><text x="52" y="20" font-size="11">Fly line</text>`);
+  items.push(`<line x1="40" x2="40" y1="8" y2="26" stroke="var(--fly)" stroke-width="3"/><text x="52" y="20" font-size="11">Fly line</text>`);
   for(const [t,label] of rig.parts){
     if(t==="line"){items.push(`<line x1="40" x2="40" y1="${y}" y2="${y+34}" stroke="var(--ink)" stroke-width="1.2"/><text x="52" y="${y+21}" font-size="11">${esc(label)}</text>`);y+=34}
-    else if(t==="dry"){if(y<surface-8)y=surface-8;items.push(`<path d="M30 ${y+8} L50 ${y+8} M40 ${y} L40 ${y+8} M33 ${y-2} L47 ${y+6}" stroke="var(--hackle)" stroke-width="2.4"/><text x="58" y="${y+6}" font-size="11" font-weight="600">${esc(label)}</text>`);y+=10}
-    else if(t==="indicator"){if(y<surface-10)y=surface-10;items.push(`<circle cx="40" cy="${y+8}" r="8" fill="var(--hackle)"/><text x="58" y="${y+12}" font-size="11" font-weight="600">${esc(label)}</text>`);y+=18}
+    else if(t==="dry"){if(y<surface-8)y=surface-8;items.push(`<path d="M30 ${y+8} L50 ${y+8} M40 ${y} L40 ${y+8} M33 ${y-2} L47 ${y+6}" stroke="var(--fly)" stroke-width="2.4"/><text x="58" y="${y+6}" font-size="11" font-weight="600">${esc(label)}</text>`);y+=10}
+    else if(t==="indicator"){if(y<surface-10)y=surface-10;items.push(`<circle cx="40" cy="${y+8}" r="8" fill="var(--fly)"/><text x="58" y="${y+12}" font-size="11" font-weight="600">${esc(label)}</text>`);y+=18}
     else if(t==="shot"){items.push(`<circle cx="40" cy="${y+6}" r="4" fill="var(--muted)"/><text x="52" y="${y+10}" font-size="11">${esc(label)}</text>`);y+=14}
     else if(t==="nymph"){items.push(`<ellipse cx="40" cy="${y+9}" rx="5" ry="9" fill="var(--river)"/><circle cx="40" cy="${y+1}" r="3.5" fill="var(--warn)"/><text x="52" y="${y+13}" font-size="11" font-weight="600">${esc(label)}</text>`);y+=20}
     else if(t==="streamer"){items.push(`<path d="M34 ${y} Q40 ${y+18} 36 ${y+34} M46 ${y} Q40 ${y+18} 44 ${y+34}" stroke="var(--river)" stroke-width="4" fill="none"/><text x="56" y="${y+18}" font-size="11" font-weight="600">${esc(label)}</text>`);y+=36}
@@ -1109,7 +1271,7 @@ function renderMap(){
   $$("#mapSvg .mk").forEach(g=>{const go=()=>location.hash="river-"+g.dataset.river;g.addEventListener("click",go);g.addEventListener("keydown",e=>{if(e.key==="Enter")go()})});
   const off=RIVERS.filter(r=>r.custom&&(r.lat==null||r.lat<box.latMin||r.lat>box.latMax||r.lon<box.lonMin||r.lon>box.lonMax));
   const holder=$("#v-map");$$(".offmap",holder).forEach(e=>e.remove());
-  if(off.length)holder.insertAdjacentHTML("beforeend",`<div class="card offmap"><h3>Your rivers outside this map</h3><div class="grid">${off.map(r=>riverCard(r,conditions(r),recommend(r,{month:new Date().getMonth(),wtF:conditions(r).wtF,sky:"partly",time:timeOfDay(),flowK:null}))).join("")}</div></div>`),bindCards("#v-map .offmap");
+  if(off.length)holder.insertAdjacentHTML("beforeend",`<div class="stack offmap"><h3>Your rivers outside this map</h3><div class="list">${off.map(r=>riverCard(r,conditions(r),recommend(r,{month:new Date().getMonth(),wtF:conditions(r).wtF,sky:"partly",time:timeOfDay(),flowK:null}))).join("")}</div></div>`),bindCards("#v-map .offmap");
 }
 
 /* ---------- routing & init ---------- */
@@ -1119,13 +1281,19 @@ function fillSelects(){
   for(const id of ["hatchRiver","rfRiver","bugRiver","lgRiver","tpRiver","repRiver"]){const s=$("#"+id);const v=s.value;s.innerHTML=opts;if(v&&riverById(v))s.value=v}
   $("#flyNames").innerHTML=FLIES.map(f=>`<option value="${esc(f.name)} #${esc(f.sizes.split("–")[0])}">`).join("");
 }
-const VIEWS=["today","crew","rivers","hatches","flies","bugid","guide","log","trip","learn","map"];
+const VIEWS=["home","crew","rivers","hatches","flies","bugid","guide","log","trip","learn","map","more","install"];
+const TAB_OF={home:"home",rivers:"rivers",river:"rivers",map:"rivers",flies:"flies",bugid:"flies",crew:"crew",log:"crew",more:"more",guide:"more",trip:"more",hatches:"more",learn:"more",install:"more"};
 function route(){
-  let h=(location.hash||"#today").slice(1);
-  let view=h.startsWith("river-")?"river":(VIEWS.includes(h)?h:"today");
+  let h=(location.hash||"#home").slice(1);
+  if(h==="today")h="home";
+  if(h==="log-new"){$("#logFold").open=true;history.replaceState(null,"","#log");h="log"}
+  if(h==="report-new"){$("#repFold").open=true;history.replaceState(null,"","#crew");h="crew"}
+  let view=h.startsWith("river-")?"river":(VIEWS.includes(h)?h:"home");
   $$(".view").forEach(v=>v.classList.toggle("on",v.id==="v-"+view));
-  $$("#tabs a").forEach(a=>a.setAttribute("aria-current",a.getAttribute("href")==="#"+(view==="river"?"rivers":view)?"page":"false"));
-  if(view==="today")renderToday();
+  $$("#tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.tab===TAB_OF[view]?"page":"false"));
+  if(view==="home")renderHome();
+  if(view==="more")renderMore();
+  if(view==="install")renderInstallHow();
   if(view==="crew"){syncCrewChrome();renderFeed()}
   if(view==="rivers")renderRivers();
   if(view==="river")renderRiver(h.slice(6));
@@ -1141,10 +1309,10 @@ function route(){
 }
 function updateBadge(){
   const b=$("#liveBadge");const n=$("#feedNote");
-  if(LIVE.usgs||LIVE.wx){LIVE.state="on";b.className="live pill good";b.innerHTML=`<span class="dot"></span>Live: ${LIVE.usgs} gauges`;n.classList.add("hidden")}
-  else{LIVE.state="off";b.className="live pill na";b.innerHTML=`<span class="dot"></span>Offline data`;
+  if(LIVE.usgs||LIVE.wx){LIVE.state="on";b.className="live on";b.querySelector(".lt").textContent="Live";b.title=`Live data from ${LIVE.usgs} USGS gauges`;n.classList.add("hidden")}
+  else{LIVE.state="off";b.className="live";b.querySelector(".lt").textContent="Offline";
     n.classList.remove("hidden");
-    n.innerHTML=`Live USGS flows and weather couldn't load here. This page's host blocks outside data, or you're offline. Recommendations use the hatch calendar, and you can enter flows and temps by hand on any river page. When Driftline runs on a normal web host, the readings fill in on their own.`}
+    n.textContent=`Live flows and weather can't load right now. Recommendations use the hatch calendar, and you can enter a flow by hand on any river page.`}
 }
 async function shrinkImage(file,max=1280,q=0.85){
   const url=URL.createObjectURL(file);
@@ -1198,7 +1366,7 @@ function crewItemsFor(riverId,days=60){const cut=Date.now()-days*864e5;return CR
 function crewChip(r){
   if(!crewMode())return "";const it=crewItemsFor(r.id,7);if(!it.length)return "";
   const rep=it.find(i=>i.type==="report"&&i.rating);
-  return `<div class="small"><span class="chip">Crew: ${it.length} post${it.length>1?"s":""} this week${rep?" · "+esc(rep.angler)+" says "+RATING[rep.rating].toLowerCase():""}</span></div>`;
+  return `<div class="crewc">${rep?esc(rep.angler)+" says "+RATING[rep.rating].toLowerCase():it.length+" crew post"+(it.length>1?"s":"")} this week</div>`;
 }
 function crewContext(){
   if(!crewMode()||!CREW.items.length)return "";
@@ -1211,22 +1379,28 @@ function syncCrewChrome(){
   $("#crewJoin").classList.toggle("hidden",!CREW.ok||on);
   $("#crewMain").classList.toggle("hidden",!on);
   $("#crewWho").textContent=on?"Posting as "+CREW.name:"";$("#crewName2").textContent=CREW.name;
-  const b=$("#crewBadge");b.classList.toggle("hidden",!on);b.textContent=on?"Crew · "+CREW.name:"";
+  const b=$("#crewBadge");b.classList.toggle("ghost",!on);b.textContent=on?CREW.name.trim().charAt(0).toUpperCase():"+";b.setAttribute("aria-label",on?"Crew: "+CREW.name:"Join the crew");
+  $("#moreCrewName").textContent=on?CREW.name:"Join the crew";$("#moreCrewSub").textContent=on?"Crew member":"Share reports with your friends";
   if(!$("#jName").value)$("#jName").value=CREW.name;
 }
+function when(i){
+  const d=i.date?new Date(i.date+"T12:00"):new Date(i.created||Date.now());const days=Math.round((new Date().setHours(12,0,0,0)-d.setHours(12,0,0,0))/864e5);
+  return days<=0?"Today":days===1?"Yesterday":days<7?d.toLocaleDateString(undefined,{weekday:"long"}):d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+}
+const AV_COLORS=["#e5603f","#0f6b73","#7a5bb5","#2b7a4b","#b07a12","#c2477a"];
+function avatarFor(name){let h=0;for(const ch of String(name))h=(h*31+ch.charCodeAt(0))>>>0;return `<span class="avatar" style="background:${AV_COLORS[h%AV_COLORS.length]}" aria-hidden="true">${esc(String(name).trim().charAt(0).toUpperCase()||"?")}</span>`}
 function feedItem(i){
   const mine=CREW.name&&String(i.angler).toLowerCase()===CREW.name.toLowerCase();
-  const cond=[i.cfs!=null?fmt(i.cfs)+" CFS":"",i.wtF!=null?i.wtF+"°F water":"",skyWord[i.sky]||""].filter(Boolean).join(" · ");
-  const head=i.type==="report"?`<b>${esc(i.angler)}</b> fished <a href="#river-${esc(i.riverId)}">${esc(i.river)}</a>`:`<b>${esc(i.angler)}</b> caught ${i.length?`a <b class="num">${esc(i.length)}"</b> `:"a "}${esc(String(i.species||"fish").toLowerCase())} on <a href="#river-${esc(i.riverId)}">${esc(i.river)}</a>`;
+  const cond=[i.cfs!=null?fmt(i.cfs)+" cfs":"",i.wtF!=null?i.wtF+"° water":"",skyWord[i.sky]||""].filter(Boolean).join(" · ");
+  const what=i.type==="report"?`fished <a href="#river-${esc(i.riverId)}">${esc(String(i.river).split(" · ")[0])}</a>`:`caught ${i.length?`a <b class="num">${esc(i.length)}"</b> `:"a "}${esc(String(i.species||"fish").toLowerCase())} on <a href="#river-${esc(i.riverId)}">${esc(String(i.river).split(" · ")[0])}</a>`;
   const rk=i.rating>=3?"good":i.rating===2?"warn":"bad";
-  return `<div class="card stack"><div class="row" style="justify-content:space-between"><div>${head}</div><span class="small muted num">${esc(i.date||"")}</span></div>
-   ${i.type==="report"&&i.rating?`<div>${pill({k:rk,label:RATING[i.rating]})}</div>`:""}
-   ${i.flies||i.fly?`<div class="small"><b>Flies:</b> ${esc(i.flies||i.fly)}</div>`:""}
-   ${i.notes?`<div class="small" style="white-space:pre-wrap">${esc(i.notes)}</div>`:""}
-   ${i.hasPhoto?`<img loading="lazy" src="/api/crew?photo=${encodeURIComponent(i.id)}&code=${encodeURIComponent(CREW.code)}" alt="Photo posted by ${esc(i.angler)}" style="max-width:100%;max-height:440px;object-fit:cover;border-radius:8px">`:""}
-   ${cond?`<div class="small muted">${esc(cond)}</div>`:""}
+  return `<article class="post">
+   <div class="who">${avatarFor(i.angler)}<div style="flex:1;min-width:0"><b>${esc(i.angler)}</b> ${what}<div class="small muted">${esc(when(i))}${cond?" · "+esc(cond):""}</div></div>${i.type==="report"&&i.rating?pill({k:rk,label:RATING[i.rating]}):""}</div>
+   ${i.hasPhoto?`<img loading="lazy" src="/api/crew?photo=${encodeURIComponent(i.id)}&code=${encodeURIComponent(CREW.code)}" alt="Photo posted by ${esc(i.angler)}">`:""}
+   ${i.notes?`<div style="white-space:pre-wrap">${esc(i.notes)}</div>`:""}
+   ${i.flies||i.fly?`<div>${String(i.flies||i.fly).split(",").map(f=>f.trim()).filter(Boolean).map(f=>`<span class="chip">${esc(f)}</span>`).join("")}</div>`:""}
    ${mine?`<div><button class="btn ghost small" type="button" data-crewdel="${esc(i.id)}">Delete</button></div>`:""}
-  </div>`;
+  </article>`;
 }
 function renderFeed(){
   if(!crewMode())return;
@@ -1261,7 +1435,7 @@ async function submitReport(e){
   try{
     await postCrew({type:"report",date:$("#repDate").value,riverId:r.id,river:rLabel(r),rating:+$("#repRating").value,flies:$("#repFlies").value,notes:$("#repNotes").value,
       cfs:c.cfs,wtF:c.wtF!=null?Math.round(c.wtF):null,sky:c.sky||"",airF:c.airF!=null?Math.round(c.airF):null},$("#repPhoto").files[0]);
-    $("#repFlies").value="";$("#repNotes").value="";$("#repPhoto").value="";renderFeed();toast("Report posted");
+    $("#repFlies").value="";$("#repNotes").value="";$("#repPhoto").value="";$("#repFold").open=false;renderFeed();toast("Report posted");
   }catch(err){toast(err.message||"Couldn't post. Try again.")}
   finally{btn.disabled=false;btn.textContent="Post report"}
 }
@@ -1272,7 +1446,7 @@ async function saveCrewCatch(){
     await postCrew({type:"catch",date:$("#lgDate").value,riverId:r?.id||"",river:r?rLabel(r):"",species:$("#lgSpecies").value,length:$("#lgLen").value?+$("#lgLen").value:null,fly:$("#lgFly").value.trim(),
       sky:$("#lgSky").value||c.sky||"",cfs:$("#lgCfs").value?+$("#lgCfs").value:c.cfs??null,wtF:$("#lgWt").value?+$("#lgWt").value:(c.wtF!=null?Math.round(c.wtF):null),
       airF:c.airF!=null?Math.round(c.airF):null,pressure:c.pressure!=null?Math.round(c.pressure):null,moon:moonPhase(new Date($("#lgDate").value+"T12:00")),notes:$("#lgNotes").value.trim()},$("#lgPhoto").files[0]);
-    ["lgLen","lgFly","lgNotes","lgCfs","lgWt","lgPhoto"].forEach(id=>$("#"+id).value="");renderLog();toast("Catch shared with the crew");
+    ["lgLen","lgFly","lgNotes","lgCfs","lgWt","lgPhoto"].forEach(id=>$("#"+id).value="");$("#logFold").open=false;renderLog();toast("Catch saved");
   }catch(err){toast(err.message||"Couldn't save. Try again.")}
   finally{btn.disabled=false;btn.textContent="Save catch"}
 }
@@ -1282,12 +1456,12 @@ function renderWeekend(rivers){
   const days=[];for(let d=new Date(start);days.length<3&&d.getDay()!==1;d.setDate(d.getDate()+1))days.push(new Date(d));
   const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
   const rows=rivers.filter(r=>COND[r.id]?.wx?.daily&&!offSeason(r));
-  if(!rows.length){el.innerHTML=`<h3>Weekend outlook</h3><p class="small muted">The weekend forecast for every river shows up here when live weather loads.</p>`;return}
+  if(!rows.length){el.innerHTML=`<h3>This weekend</h3><p class="small muted" style="margin:0">The weekend forecast shows up here when live weather loads.</p>`;return}
   const cell=(r,d)=>{const w=COND[r.id].wx.daily;const k=w.time.indexOf(iso(d));if(k<0)return `<td class="muted">—</td>`;
     const rain=w.precipitation_probability_max[k],wind=w.wind_speed_10m_max[k],hi=w.temperature_2m_max[k],lo=w.temperature_2m_min[k];
     const bad=rain>=60||wind>=22||hi<28,meh=rain>=35||wind>=15;
-    return `<td><span class="pill ${bad?"bad":meh?"warn":"good"}" style="font-weight:500"><span class="dot"></span><span class="num">${fmt(hi)}°/${fmt(lo)}°</span></span><div class="small muted num">${fmt(rain)}% rain · ${fmt(wind)} mph</div></td>`};
-  el.innerHTML=`<h3>Weekend outlook</h3><p class="small muted">Green means good fishing weather. Yellow means some wind or rain. Red means a washout, a gale or deep cold.</p><div class="scroll"><table><tr><th>Water</th>${days.map(d=>`<th>${d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})}</th>`).join("")}</tr>${rows.map(r=>`<tr><td><a href="#river-${esc(r.id)}">${esc(r.name)}</a><div class="small muted">${esc(r.section)}</div></td>${days.map(d=>cell(r,d)).join("")}</tr>`).join("")}</table></div>`;
+    return `<td><span class="pill ${bad?"bad":meh?"warn":"good"}"><span class="num">${fmt(hi)}°</span></span><div class="small muted num" style="white-space:nowrap">${fmt(rain)}% · ${fmt(wind)} mph</div></td>`};
+  el.innerHTML=`<h3>This weekend</h3><p class="small muted" style="margin:0">Green is good fishing weather. Yellow brings some wind or rain. Red is a washout, a gale or deep cold.</p><div class="scroll"><table><tr><th></th>${days.map(d=>`<th>${d.toLocaleDateString(undefined,{weekday:"short"})}</th>`).join("")}</tr>${rows.slice(0,6).map(r=>`<tr><td><a href="#river-${esc(r.id)}" style="font-weight:700;text-decoration:none">${esc(r.name)}</a></td>${days.map(d=>cell(r,d)).join("")}</tr>`).join("")}</table></div>`;
 }
 async function initSample(){
   try{
@@ -1301,10 +1475,33 @@ async function initSample(){
   }
   $("#guideOff").classList.toggle("hidden",!!SAMPLE);
   $("#chatForm").classList.toggle("hidden",!SAMPLE);$("#guideStarters").classList.toggle("hidden",!SAMPLE);
-  $("#guideTab").classList.toggle("hidden",!SAMPLE);
   $("#photoCard").classList.toggle("hidden",!(SAMPLE&&SAMPLE_IMG));
 }
-document.addEventListener("DOMContentLoaded",()=>{});
+/* ---------- theme, more, install ---------- */
+function applyTheme(){const t=store.get("theme","");if(t)document.documentElement.setAttribute("data-theme",t);else document.documentElement.removeAttribute("data-theme")}
+function renderMore(){syncCrewChrome();$("#moreInstall").classList.toggle("hidden",isStandalone())}
+const INSTALL={prompt:null};
+const isStandalone=()=>{try{return matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){return false}};
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const isPhone=()=>/android|iphone|ipad|ipod/i.test(navigator.userAgent)||isIOS();
+function renderInstallCard(){
+  const el=$("#installCard");if(!el)return;
+  const show=!isStandalone()&&!store.get("installDismissed",false)&&(INSTALL.prompt||isPhone())&&location.protocol==="https:";
+  el.classList.toggle("hidden",!show);if(!show)return;
+  el.innerHTML=`<img src="/apple-touch-icon.png" alt=""><div style="flex:1"><b>Put Driftline on your Home Screen</b><div class="small muted">It opens full screen, like an app.</div></div>
+    <div class="stack" style="gap:6px">${INSTALL.prompt?`<button class="btn small" id="doInstall" type="button">Install</button>`:`<a class="btn small" href="#install" style="text-decoration:none;text-align:center">How</a>`}<button class="btn ghost small" id="skipInstall" type="button">Not now</button></div>`;
+  const d=$("#doInstall");if(d)d.onclick=async()=>{INSTALL.prompt.prompt();try{await INSTALL.prompt.userChoice}catch(e){}INSTALL.prompt=null;renderInstallCard()};
+  $("#skipInstall").onclick=()=>{store.set("installDismissed",true);renderInstallCard()};
+}
+function renderInstallHow(){
+  const ios=isIOS();
+  $("#installHow").innerHTML=isStandalone()?`<h3>You're all set</h3><p>Driftline is already on your Home Screen.</p>`:
+   `<div class="install"><img src="/apple-touch-icon.png" alt="Driftline app icon"><div><h3>Add Driftline to your Home Screen</h3><p class="small muted" style="margin:4px 0 0">It gets its own icon and opens full screen.</p></div></div>
+   ${INSTALL.prompt?`<button class="btn" id="doInstall2" type="button">Install Driftline</button>`:""}
+   ${ios?`<ol style="margin:0;padding-left:20px;display:grid;gap:8px"><li>Open driftline-fly.netlify.app in <b>Safari</b>.</li><li>Tap the <b>Share</b> button (the square with an arrow).</li><li>Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</li></ol>`
+        :`<ol style="margin:0;padding-left:20px;display:grid;gap:8px"><li>Open driftline-fly.netlify.app in <b>Chrome</b>.</li><li>Tap the <b>⋮</b> menu.</li><li>Tap <b>Add to Home screen</b> or <b>Install app</b>.</li></ol>`}`;
+  const d=$("#doInstall2");if(d)d.onclick=async()=>{INSTALL.prompt.prompt();try{await INSTALL.prompt.userChoice}catch(e){}INSTALL.prompt=null;renderInstallHow()};
+}
 (function init(){
   loadRivers();fillSelects();
   $("#rfDate").value=todayISO();$("#repDate").value=todayISO();$("#lgDate").value=todayISO();$("#tpDate").value=todayISO();$("#rfTime").value=timeOfDay();
@@ -1323,7 +1520,11 @@ document.addEventListener("DOMContentLoaded",()=>{});
   $("#tripForm").addEventListener("change",renderTrip);
   $("#addGauge").onsubmit=addGaugeSubmit;
   $("#joinForm").onsubmit=joinCrew;$("#repForm").onsubmit=submitReport;
-  $("#feedRiver").onchange=renderFeed;$("#feedType").onchange=renderFeed;$("#logScope").onchange=renderLog;
+  $("#feedRiver").onchange=renderFeed;$("#feedType").onchange=renderFeed;
+  $$("[data-scope]").forEach(a=>a.onclick=e=>{e.preventDefault();$("#logScope").value=a.dataset.scope;$$("[data-scope]").forEach(x=>x.setAttribute("aria-current",x===a?"true":"false"));renderLog()});
+  $("#themeSel").value=store.get("theme","");applyTheme();$("#themeSel").onchange=()=>{store.set("theme",$("#themeSel").value);applyTheme()};
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();INSTALL.prompt=e;renderInstallCard()});
+  if("serviceWorker" in navigator&&location.protocol==="https:"&&!/claude|claudeusercontent/.test(location.hostname)){navigator.serviceWorker.register("/sw.js").catch(()=>{})}
   $("#feedRefresh").onclick=async()=>{await loadCrew();renderFeed();toast("Up to date")};
   $("#crewLeave").onclick=e=>{e.preventDefault();CREW.name="";store.set("crewName","");$("#jName").value="";syncCrewChrome()};
   window.addEventListener("hashchange",route);
@@ -1331,7 +1532,7 @@ document.addEventListener("DOMContentLoaded",()=>{});
   initStorage();
   (async()=>{await pingCrew();syncCrewChrome();if(crewMode()){await loadCrew();}await initSample();if(crewMode())rerender()})();
   // live feeds
-  Promise.all(RIVERS.map(loadConditions)).then(()=>{updateBadge();const h=location.hash.slice(1);if(!h.startsWith("river-")&&!["guide","log","bugid"].includes(h))route();else if(h.startsWith("river-"))renderRiver(h.slice(6))});
+  Promise.all(RIVERS.map(loadConditions)).then(()=>{updateBadge();const h=location.hash.slice(1);if(["","home","today","rivers","map"].includes(h))rerender();else if(h.startsWith("river-"))renderRiver(h.slice(6))});
 })();
 </script>
 </body>

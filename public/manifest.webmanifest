@@ -1,0 +1,23 @@
+{
+  "name": "Driftline",
+  "short_name": "Driftline",
+  "description": "Flows, hatches, flies and crew reports for the water you fish.",
+  "id": "/",
+  "start_url": "/#home",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a3540",
+  "theme_color": "#eef1ec",
+  "categories": ["sports", "weather", "lifestyle"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Log a fish", "url": "/#log-new", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Post a report", "url": "/#report-new", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "What to tie on", "url": "/#flies", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
