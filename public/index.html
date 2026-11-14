@@ -1325,7 +1325,7 @@ async function renderMap(){
   if(!MAP.map){
     const L=window.L;
     MAP.map=L.map(holder,{zoomControl:false,attributionControl:true,tap:true}).setView([44.2,-121.5],8);
-    L.control.zoom({position:"bottomleft"}).addTo(MAP.map);
+    L.control.zoom({position:"bottomright"}).addTo(MAP.map);
     setBase(store.get("mapBase","topo"));
     if(store.get("mapLand",true))toggleLand(true);
     MAP.markers=L.layerGroup().addTo(MAP.map);MAP.pins=L.layerGroup().addTo(MAP.map);
