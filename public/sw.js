@@ -1,7 +1,7 @@
 // Driftline service worker: makes the app open instantly and work offline.
 // Pages load network-first (so updates show up right away), icons cache-first.
 // Live data (/api/*, USGS, weather, fonts) is never cached here.
-const CACHE = "driftline-v2";
+const CACHE = "driftline-v3";
 const SHELL = ["/", "/manifest.webmanifest", "/favicon.svg", "/apple-touch-icon.png", "/icon-192.png", "/icon-512.png"];
 
 self.addEventListener("install", (e) => {

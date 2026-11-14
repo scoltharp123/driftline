@@ -133,7 +133,7 @@ th{font-size:.78rem;color:var(--muted);font-weight:700}
 .toast{position:fixed;bottom:calc(var(--bot) + 88px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:.92rem;z-index:30;font-weight:700}
 
 /* ---------- hero (the one bold moment) ---------- */
-.hero{position:relative;overflow:hidden;border-radius:var(--r-lg);padding:22px 20px 18px;color:#f2fbfa;
+.hero{position:relative;overflow:hidden;border-radius:var(--r-lg);padding:22px 20px 76px;color:#f2fbfa;
   background:radial-gradient(120% 90% at 0% 0%,#19858c 0%,transparent 60%),linear-gradient(160deg,#0f6b73,#0a3540 70%);display:grid;gap:14px;text-decoration:none}
 .hero h2{font-size:2.3rem;color:#fff;line-height:1}
 .hero .sec{opacity:.82;font-size:.95rem;margin-top:4px}
@@ -210,6 +210,9 @@ svg text{fill:var(--ink);font-family:var(--body)}
 .menu a::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2.5px solid var(--muted);border-top:2.5px solid var(--muted);transform:rotate(45deg)}
 .rcard{display:grid;gap:8px}
 .stripe{display:none}
+#recForm .form{grid-template-columns:1fr 1fr}
+#recForm .form label:first-child{grid-column:1/-1}
+#joinForm .row,#joinForm .btn{width:100%}
 @media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
 </style>
 </head>
@@ -860,9 +863,9 @@ function heroHTML(x,{label="Best bet right now",withLink=true}={}){
   const {r,c,rec}=x;const rf=rateFlow(r,c.cfs);const rt=rateTemp(c.wtF);
   const h=COND[r.id]?.hist;
   const flies=[rec.dries[0],rec.nymphs[0],rec.streamers[0]].filter(Boolean).slice(0,3);
-  return `${Array.isArray(h)?`<div class="wave" style="height:90px;opacity:.55">${sparkline(h,400,90,{stroke:"rgba(255,255,255,.75)",fill:"rgba(255,255,255,.10)",noDot:true})}</div>`:WAVE}
+  return `${Array.isArray(h)?`<div class="wave" style="height:64px;opacity:.6">${sparkline(h,400,64,{stroke:"rgba(255,255,255,.8)",fill:"rgba(255,255,255,.10)",noDot:true})}</div><span style="position:absolute;right:16px;bottom:10px;font-size:.72rem;opacity:.75">Flow, last 7 days</span>`:WAVE}
    <div class="row" style="justify-content:space-between"><span class="tag">${esc(label)}</span>${pill(rt&&rt.k==="bad"?rt:rf)}</div>
-   <div style="position:relative"><h2>${esc(r.name)}</h2><div class="sec">${esc(r.section)}${rec.top[0]?` · ${esc(BUGS[rec.top[0].b].name)} on the calendar`:""}</div></div>
+   <div style="position:relative"><h2>${esc(r.name)}</h2><div class="sec">${esc(r.section)}${rec.top[0]?` · ${esc(BUGS[rec.top[0].b].name)}s`.replace(/ss$/,"s").replace(/Terrestrialss?$/,"Terrestrials"):""}</div></div>
    <div class="reads" style="position:relative">
      <div><b>${r.lake?"Lake":fmt(c.cfs)}</b><span>${r.lake?"no gauge":"cfs"}</span></div>
      <div><b>${c.wtF==null?"—":fmt(c.wtF)+"°"}</b><span>water</span></div>
