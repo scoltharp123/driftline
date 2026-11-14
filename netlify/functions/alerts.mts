@@ -14,6 +14,15 @@ export default async () => {
       if (!w.gauge) continue;
       if (!cache.has(w.gauge)) cache.set(w.gauge, await latestCfs(w.gauge));
       const cfs = cache.get(w.gauge) ?? null;
+      if (w.dam && cfs != null) {
+        rec.lastCfs = rec.lastCfs || {};
+        const prevCfs = rec.lastCfs[w.id];
+        if (prevCfs != null && Math.abs(cfs - prevCfs) >= Math.max(15, prevCfs * 0.2)) {
+          const up = cfs > prevCfs;
+          await send(key, rec, { title: `${w.dam} ${up ? "raised" : "cut"} releases`, body: `${w.name} went from ${Math.round(prevCfs)} to ${Math.round(cfs)} cfs in the last hour.${up ? " Expect the river to come up." : ""}`, url: `/#river-${w.id}`, tag: `dam-${w.id}` });
+        }
+        if (prevCfs !== cfs) { rec.lastCfs[w.id] = cfs; changed = true; }
+      }
       const state = flowState(w, cfs);
       if (!state) continue;
       const before = rec.last?.[w.id];

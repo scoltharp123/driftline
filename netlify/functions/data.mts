@@ -6,6 +6,8 @@ const ALLOWED = new Set([
   "api.waterdata.usgs.gov",
   "waterservices.usgs.gov",
   "api.open-meteo.com",
+  "api.water.noaa.gov",
+  "router.project-osrm.org",
 ]);
 
 export default async (req: Request) => {
@@ -18,7 +20,7 @@ export default async (req: Request) => {
     return Response.json({ error: "That url isn't valid." }, { status: 400 });
   }
   if (u.protocol !== "https:" || !ALLOWED.has(u.hostname)) {
-    return Response.json({ error: "Only USGS and Open-Meteo data can be fetched." }, { status: 403 });
+    return Response.json({ error: "Only river, weather and routing data can be fetched." }, { status: 403 });
   }
   try {
     const upstream = await fetch(u.toString(), {

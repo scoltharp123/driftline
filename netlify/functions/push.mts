@@ -23,11 +23,11 @@ export default async (req: Request) => {
   const prev: any = (await subs().get(key, { type: "json" })) || {};
   const watch = (Array.isArray(b.watch) ? b.watch : []).slice(0, 30).map((w: any) => ({
     id: String(w.id || "").slice(0, 60), name: String(w.name || "").slice(0, 80), gauge: /^[0-9]{8,15}$/.test(w.gauge) ? w.gauge : null,
-    idealLo: num(w.idealLo), idealHi: num(w.idealHi), hi: num(w.hi),
+    idealLo: num(w.idealLo), idealHi: num(w.idealHi), hi: num(w.hi), dam: typeof w.dam === "string" ? w.dam.slice(0, 40) : null,
   })).filter((w: any) => w.id);
   const rec = {
     sub: b.subscription, name: String(b.name || "").slice(0, 40), crew: b.crew !== false, flows: b.flows !== false,
-    watch, last: prev.last || {}, updated: Date.now(),
+    watch, last: prev.last || {}, lastCfs: prev.lastCfs || {}, updated: Date.now(),
   };
   await subs().setJSON(key, rec);
   if (b.test && configure()) await send(key, rec, { title: "Driftline alerts are on", body: watch.length ? `Watching ${watch.map((w: any) => w.name).join(", ")}.` : "Star a river to get flow alerts for it.", url: "/#home" });

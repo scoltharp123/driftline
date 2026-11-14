@@ -42,6 +42,19 @@ export default async (req: Request, context: any) => {
   if (!crewOk(req)) return Response.json({ error: "That crew code isn't right." }, { status: 401 });
 
   try {
+    const boxName = url.searchParams.get("box");
+    if (boxName !== null) {
+      const k = "box/" + boxName.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, "-").slice(0, 40);
+      if (k === "box/") return Response.json({ error: "A name is required." }, { status: 400 });
+      if (req.method === "GET") return Response.json({ box: (await entries().get(k, { type: "json" })) || null }, { headers: { "cache-control": "no-store" } });
+      if (req.method === "PUT") {
+        let b: any;
+        try { b = await req.json(); } catch { return Response.json({ error: "Request body must be JSON." }, { status: 400 }); }
+        const items = (Array.isArray(b.items) ? b.items : []).slice(0, 400).map((i: any) => ({ name: str(i.name, 80), size: num(i.size), count: Math.max(0, Math.min(999, Math.round(num(i.count) ?? 0))) })).filter((i: any) => i.name);
+        await entries().setJSON(k, { items, updated: Date.now() });
+        return Response.json({ ok: true });
+      }
+    }
     const photoId = url.searchParams.get("photo");
     if (req.method === "GET" && photoId) {
       if (!/^[0-9a-z-]+$/.test(photoId)) return new Response("Bad id", { status: 400 });
@@ -109,6 +122,6 @@ export default async (req: Request, context: any) => {
 
 export const config: Config = {
   path: "/api/crew",
-  method: ["GET", "POST", "DELETE"],
+  method: ["GET", "POST", "PUT", "DELETE"],
   rateLimit: { action: "rate_limit", aggregateBy: ["ip", "domain"], windowSize: 60, windowLimit: 60 },
 };
