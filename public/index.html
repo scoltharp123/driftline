@@ -744,15 +744,17 @@ async function getJSONDirect(url,ms){
   finally{clearTimeout(t)}
 }
 let PROXY_OK=location.protocol.startsWith("http");
+const RELAY_FIRST=/apps\.fs\.usda\.gov|router\.project-osrm\.org|api\.water\.noaa\.gov|overpass|api\.water\.usgs\.gov\/nldi/;
+async function viaRelay(url,ms){
+  try{return await getJSONDirect("/api/data?url="+encodeURIComponent(url),ms)}
+  catch(e){if(String(e).includes("HTTP 404"))PROXY_OK=false;throw e}
+}
 async function getJSON(url,ms=9000){
-  // Fetch straight from USGS / Open-Meteo. Only if the browser blocks that,
-  // fall back to the site's small /api/data relay.
+  // Most sources allow direct browser requests. A few don't, so those go
+  // through the site's small /api/data relay first.
+  if(PROXY_OK&&RELAY_FIRST.test(url)){try{return await viaRelay(url,ms+6000)}catch(e){}}
   try{return await getJSONDirect(url,ms)}
-  catch(e){
-    if(!PROXY_OK)throw e;
-    try{return await getJSONDirect("/api/data?url="+encodeURIComponent(url),ms+6000)}
-    catch(e2){if(String(e2).includes("HTTP 404")||e2 instanceof TypeError)PROXY_OK=false;throw e2}
-  }
+  catch(e){if(!PROXY_OK||RELAY_FIRST.test(url))throw e;return viaRelay(url,ms+6000)}
 }
 const USGS_OGC=["https://api.waterdata.usgs.gov/ogcapi/v0/collections","https://api.waterdata.usgs.gov/ogcapi/v1/collections"];
 async function fetchFlow(site){
