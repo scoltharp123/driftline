@@ -266,6 +266,7 @@ svg text{fill:var(--ink);font-family:var(--body)}
   <section class="view" id="v-home">
     <div class="greet"><h1 id="greet">Good morning</h1><p id="greetSub"></p></div>
     <a class="hero" id="heroCard" href="#rivers"></a>
+    <div class="card stack" id="homePlan"></div>
     <div class="quick">
       <a href="#log-new"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-5 9-6.5 13-3.5L21 5v14l-5-3.5C12 18.5 6 17 3 12z"/><circle cx="8" cy="11" r=".6" fill="currentColor"/></svg></i>Log a fish</a>
       <a href="#report-new"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></i>Post report</a>
@@ -338,7 +339,7 @@ svg text{fill:var(--ink);font-family:var(--body)}
     <div id="mapSheet" class="card hidden"></div>
     <div class="small muted" id="accNote"></div>
     <div class="row small" style="gap:14px"><span class="row" style="gap:6px"><i style="width:22px;height:5px;border-radius:3px;background:#2e9e57;display:inline-block"></i>Wild trout river</span><span class="row" style="gap:6px"><i style="width:22px;height:5px;border-radius:3px;background:#2f6fd6;display:inline-block"></i>Tailwater</span><span class="row" style="gap:6px"><i style="width:22px;height:5px;border-radius:3px;background:#14a3a8;display:inline-block"></i>Spring creek</span><span class="row" style="gap:6px"><i style="width:22px;height:9px;border-radius:3px;background:#2e9e57;box-shadow:0 0 0 2.5px #f2c14e;display:inline-block"></i>Special rules (fly only or catch and release)</span></div>
-    <div class="small muted">Shaded land is public (BLM, Forest Service, state and others); unshaded land may be private. B, F, C and P markers are boat ramps, fishing access, campgrounds and parking from OpenStreetMap. Long-press the map to drop a pin. Respect signs and Oregon's stream access laws.</div>
+    <div class="small muted">Shaded land is public (BLM, Forest Service, state and others); unshaded land may be private. B, F, C and D markers are boat launches, fishing sites, campgrounds and day use areas from the Forest Service and OpenStreetMap. Long-press the map to drop a pin. Respect signs and Oregon's stream access laws.</div>
     <div class="row small" style="gap:14px"><span class="row" style="gap:6px"><span class="dot" style="color:#2b7a4b"></span>Fishable</span><span class="row" style="gap:6px"><span class="dot" style="color:#c08a12"></span>Low or high</span><span class="row" style="gap:6px"><span class="dot" style="color:#b5372d"></span>Blown out</span><span class="row" style="gap:6px"><span class="dot" style="color:#7b8a87"></span>No reading</span></div>
   </section>
 
@@ -481,7 +482,7 @@ svg text{fill:var(--ink);font-family:var(--body)}
       <a href="#alerts"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></svg></i><div><b>Alerts</b><span>Flow changes on your waters, new crew posts</span></div></a>
       <a href="#trip"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></i><div><b>Trip planner</b><span>Forecast, flies and a pack list to share</span></div></a>
       <a href="#hatches"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="3.5" width="5" height="5" rx="1"/><rect x="9.5" y="3.5" width="5" height="5" rx="1" fill="currentColor"/><rect x="15.5" y="3.5" width="5" height="5" rx="1"/><rect x="3.5" y="9.5" width="5" height="5" rx="1" fill="currentColor"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><rect x="15.5" y="9.5" width="5" height="5" rx="1" fill="currentColor"/></svg></i><div><b>Hatch calendar</b><span>What hatches when, by water</span></div></a>
-      <a href="#learn"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3c0 6 12 6 12 12 0 3-3 6-6 6s-6-3-6-6c0-6 12-6 12-12"/></svg></i><div><b>Knots and rigs</b><span>Six knots, five rigs, tippet chart</span></div></a>
+      <a href="#learn"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3c0 6 12 6 12 12 0 3-3 6-6 6s-6-3-6-6c0-6 12-6 12-12"/></svg></i><div><b>Learn to fish</b><span>Reading water, drifts, bugs, knots, rigs</span></div></a>
       <a href="#map"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z"/><path d="M9 4v14M15 6v14"/></svg></i><div><b>Map</b><span>Every water at a glance</span></div></a>
     </div>
     <div class="menu">
@@ -541,13 +542,14 @@ svg text{fill:var(--ink);font-family:var(--body)}
 
   <!-- LEARN -->
   <section class="view" id="v-learn">
-    <div><a class="back" href="#more">‹ More</a><h2>Knots and rigs</h2></div>
+    <div><a class="back" href="#more">‹ More</a><h2>Learn</h2><p class="lede">The skills that catch more fish: where trout hold, how to drift a fly, which bugs matter, and how to treat the fish and the people around you.</p></div>
+    <div class="stack" id="learnTop"></div>
     <h3>Rigs</h3>
     <div class="grid" id="rigs"></div>
     <h3>Knots</h3>
     <div class="grid" id="knots"></div>
     <div class="card"><h3>Tippet chart</h3><p class="muted small">Quick rule: hook size divided by 3 is about the X rating.</p><div class="scroll"><table id="tippet"></table></div></div>
-    <div class="card stack" id="fundamentals"></div>
+    <div class="card stack hidden" id="fundamentals"></div>
   </section>
 </main>
 
@@ -836,7 +838,7 @@ function rateFlow(r,cfs){
 function rateTemp(t){
   if(t==null)return null;
   if(t>=68)return {k:"bad",label:"Too warm, give trout a break"};
-  if(t>=64)return {k:"warn",label:"Warm, fish early"};
+  if(t>=65)return {k:"warn",label:"Warm. Fish early, land fish fast"};
   if(t>=45)return {k:"good",label:"Prime"};
   if(t>=38)return {k:"warn",label:"Cold, slow and deep"};
   return {k:"warn",label:"Very cold, midday only"};
@@ -886,7 +888,7 @@ function recommend(r,ctx){
   else if(["salmonfly","golden","terrestrial"].includes(lead)&&leadS>=2){rig="Dry-dropper";why="Big bugs are out. A foam dry floats a nymph and covers both levels."}
   else if(["bwo","pmd","caddis","midge","greendrake","marchbrown","callibaetis","hex"].includes(lead)&&leadS>=2.5){rig="Dry fly, nymph until fish rise";why="A strong hatch is likely. Nymph until you see rises, then switch to a dry or emerger matched to size."}
   else {rig="Dry-dropper or indicator nymph";why="Nothing heavy is hatching. Most fish eat below the surface, so lead with nymphs."}
-  return {top,dries,nymphs,streamers,rig,why};
+  return {top,dries,nymphs,streamers,rig,why,ctx};
 }
 function flowKey(r,cfs){const f=r.flow||{};if(cfs==null||f.idealLo==null)return null;if(cfs<f.idealLo)return "low";if(cfs>f.idealHi)return "high";return "ideal"}
 function riverScore(r,ctx){
@@ -908,7 +910,7 @@ function recBlock(r,rec,opts={}){
   return `<div class="card stack">
     ${opts.noTitle?"":`<h3>${esc(rLabel(r))}</h3>`}
     <div>${rec.top.length?rec.top.map(t=>`<span class="chip">${esc(BUGS[t.b].name)}</span>`).join(""):'<span class="muted small">No hatches on the calendar this month.</span>'}</div>
-    <div class="note"><b>${esc(rec.rig)}.</b> ${esc(rec.why)}</div>
+    <div class="note"><b>Game plan.</b> ${esc(gamePlan(r,rec))}<div class="small muted" style="margin-top:6px">Rig: ${esc(rec.rig)}</div></div>
     <div class="cols">
       <div class="stack"><h3>Dries</h3><div class="flylist">${rec.dries.map(flyRow).join("")||'<span class="muted small">Skip dries today.</span>'}</div></div>
       <div class="stack"><h3>Nymphs</h3><div class="flylist">${rec.nymphs.map(flyRow).join("")}</div></div>
@@ -978,6 +980,7 @@ function renderHome(){
   else if(CREW.ok)hc.innerHTML=`<a class="card install" href="#crew" style="text-decoration:none;color:inherit"><div class="avatar" style="width:46px;height:46px">+</div><div><b>Fishing with friends?</b><div class="small muted">Join the crew to share reports and catches.</div></div></a>`;
   else hc.innerHTML="";
   renderWeekend(ranked.map(x=>x.r));
+  $("#homePlan").innerHTML=`<div class="section-h"><h3>Game plan: ${esc(best.r.name)}</h3><a href="#river-${esc(best.r.id)}">Details</a></div><p style="margin:0">${esc(gamePlan(best.r,best.rec))}</p>`;
   renderInstallCard();
 }
 function riverCard(r,c,rec,rank,o={}){
@@ -1291,7 +1294,7 @@ function renderTrip(){
        ${style==="float"&&!r.floats.length?'<p class="small note">Driftline has no float sections for this river. Most of it is wade water.</p>':""}
        ${r.regs.includes("No fishing from a floating device")&&style==="float"?'<p class="small note">On this river you can only float between spots. Pull over to fish.</p>':""}
      </div>
-     <div class="card stack"><h3>Game plan</h3><p>${esc(lvl)}</p><p class="small"><b>Midday:</b> ${esc(rec.rig)}. ${esc(rec.why)}</p><p class="small"><b>Evening:</b> ${esc(evening.dries.slice(0,2).map(x=>x.f.name+" #"+x.f.sizes).join(" or ")||"Stay with nymphs")}.</p></div>
+     <div class="card stack"><h3>Game plan</h3><p>${esc(lvl)}</p><p class="small"><b>On the water:</b> ${esc(gamePlan(r,rec))}</p><p class="small"><b>Evening:</b> ${esc(evening.dries.slice(0,2).map(x=>x.f.name+" #"+x.f.sizes).join(" or ")||"Stay with nymphs")}.</p></div>
      <div class="card stack"><h3>Pack list</h3><ul class="small">${pack.map(p=>`<li>${esc(p)}</li>`).join("")}</ul></div>
      <div class="card stack"><h3>Tie or buy before you go</h3>${(()=>{const l=shoppingFor([rec,evening]);return !BOX.length?`<p class="small muted" style="margin:0">Add your flies under Flies → My box and Driftline will list what you're missing for this trip.</p>`:l.length?`<ul class="small">${l.map(n=>`<li>${esc(n.name)} #${n.size}: ${n.have?`have ${n.have}, get ${n.want-n.have}`:`get ${n.want}`}</li>`).join("")}</ul>`:`<p class="small" style="margin:0">Your box has everything this trip calls for.</p>`})()}</div>
    </div>
@@ -1668,7 +1671,7 @@ function route(){
   if(view==="guide")renderChat();
   if(view==="log")renderLog();
   if(view==="trip")renderTrip();
-  if(view==="learn"&&!$("#rigs").children.length)renderLearn();
+  if(view==="learn"){renderLearnExtras();if(!$("#rigs").children.length)renderLearn()}
   if(view==="map")renderMap();
   window.scrollTo(0,0);
 }
@@ -2108,35 +2111,44 @@ async function loadAllLines(){for(const r of RIVERS.filter(r=>r.gauge)){if(!LINE
 
 /* ---------- ACCESS LAYER (OpenStreetMap) ---------- */
 const ACCESS={cache:new Map(),layer:null,busy:false};
-const ACC_TYPES={slipway:{label:"Boat ramp",c:"#0f6b73",g:"B"},fishing:{label:"Fishing access",c:"#2b7a4b",g:"F"},camp:{label:"Campground",c:"#7a5bb5",g:"C"},parking:{label:"Parking",c:"#3a6fb0",g:"P"}};
+const ACC_TYPES={slipway:{label:"Boat launch",c:"#0f6b73",g:"B"},fishing:{label:"Fishing site",c:"#2b7a4b",g:"F"},camp:{label:"Campground",c:"#7a5bb5",g:"C"},dayuse:{label:"Day use area",c:"#3a6fb0",g:"D"},parking:{label:"Parking",c:"#3a6fb0",g:"P"}};
 function accIcon(t){const a=ACC_TYPES[t];return window.L.divIcon({className:"",html:`<span class="accic" style="background:${a.c}">${a.g}</span>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-10]})}
+const stripHtml=h=>String(h||"").replace(/<[^>]+>/g," ").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&ndash;/g,"–").replace(/\s+/g," ").trim();
+function usfsType(a){a=String(a||"").toLowerCase();return /boat|raft|canoe|kayak|launch/.test(a)?"slipway":/fish/.test(a)?"fishing":/camp|cabin/.test(a)?"camp":/day use|picnic/.test(a)?"dayuse":null}
 async function loadAccess(){
   if(!MAP.map||!store.get("mapAccess",true))return;const L=window.L;
   if(!ACCESS.layer)ACCESS.layer=L.layerGroup().addTo(MAP.map);
   const z=MAP.map.getZoom();const note=$("#accNote");
-  if(z<11){ACCESS.layer.clearLayers();if(note)note.textContent="Zoom in to see boat ramps, fishing access and campgrounds.";return}
+  if(z<10){ACCESS.layer.clearLayers();if(note)note.textContent="Zoom in to see boat launches, fishing sites and campgrounds.";return}
   if(note)note.textContent="";
-  const b=MAP.map.getBounds();const r2=x=>Math.round(x*20)/20;
-  const bb=[r2(b.getSouth())-.05,r2(b.getWest())-.05,r2(b.getNorth())+.05,r2(b.getEast())+.05].map(x=>x.toFixed(2)).join(",");
-  const withParking=z>=14;const ck=bb+(withParking?"p":"");
-  let data=ACCESS.cache.get(ck);
+  const b=MAP.map.getBounds();const r2=x=>Math.round(x*10)/10;
+  const box=[r2(b.getWest())-.1,r2(b.getSouth())-.1,r2(b.getEast())+.1,r2(b.getNorth())+.1].map(x=>x.toFixed(2));
+  const ck=box.join(",");let data=ACCESS.cache.get(ck);
   if(!data){
-    if(ACCESS.busy)return;ACCESS.busy=true;
-    const q=`[out:json][timeout:20];(nwr["leisure"="slipway"](${bb});nwr["leisure"="fishing"](${bb});nwr["tourism"="camp_site"](${bb});${withParking?`nwr["amenity"="parking"]["access"!="private"](${bb});`:""});out center 400;`;
-    for(const host of ["https://overpass-api.de/api/interpreter","https://overpass.private.coffee/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://maps.mail.ru/osm/tools/overpass/api/interpreter"]){
-      try{const j=await getJSON(host+"?data="+encodeURIComponent(q),12000);if(Array.isArray(j.elements)){data=j.elements;ACCESS.cache.set(ck,data);break}}catch(e){}
-    }
+    if(ACCESS.busy)return;ACCESS.busy=true;data=[];
+    const usfs=`https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_RecreationOpportunities_01/MapServer/0/query?where=1%3D1&geometry=${box.join(",")}&geometryType=esriGeometryEnvelope&inSR=4326&outSR=4326&spatialRel=esriSpatialRelIntersects&outFields=recareaname,markeractivity,openstatus,recareaurl,feedescription,forestname&resultRecordCount=400&f=geojson`;
+    const osmQ=`[out:json][timeout:8];(nwr["leisure"="slipway"](${box[1]},${box[0]},${box[3]},${box[2]});nwr["leisure"="fishing"](${box[1]},${box[0]},${box[3]},${box[2]}););out center 200;`;
+    const [fs,osm]=await Promise.all([
+      getJSON(usfs,20000).catch(()=>null),
+      getJSONDirect("https://overpass-api.de/api/interpreter?data="+encodeURIComponent(osmQ),8000).catch(()=>null)]);
+    const seen=new Set();
+    for(const f of fs?.features||[]){const p=f.properties||{};const type=usfsType(p.markeractivity);if(!type)continue;const [lon,lat]=f.geometry?.coordinates||[];if(lat==null)continue;
+      const k=p.recareaname+"|"+type;if(seen.has(k))continue;seen.add(k);
+      data.push({lat,lon,type,name:p.recareaname,sub:p.markeractivity,open:p.openstatus,url:p.recareaurl,fee:/\$\d/.test(p.feedescription||"")?"Fee":"",src:"U.S. Forest Service"})}
+    for(const el of osm?.elements||[]){const t=el.tags||{};const lat=el.lat??el.center?.lat,lon=el.lon??el.center?.lon;if(lat==null)continue;
+      data.push({lat,lon,type:t.leisure==="slipway"?"slipway":"fishing",name:t.name||"",sub:"",fee:t.fee==="yes"?"Fee":t.fee==="no"?"Free":"",src:"OpenStreetMap"})}
     ACCESS.busy=false;
-    if(!data){if(note)note.textContent="Access points couldn't load. Try again in a minute.";return}
+    if(!fs&&!osm){if(note)note.textContent="Access sites couldn't load. Try again in a minute.";return}
+    ACCESS.cache.set(ck,data);
   }
   ACCESS.layer.clearLayers();
-  for(const el of data){
-    const t=el.tags||{};const type=t.leisure==="slipway"?"slipway":t.leisure==="fishing"?"fishing":t.tourism==="camp_site"?"camp":"parking";
-    const lat=el.lat??el.center?.lat,lon=el.lon??el.center?.lon;if(lat==null)continue;
-    const m=L.marker([lat,lon],{icon:accIcon(type)}).addTo(ACCESS.layer);
-    const fee=t.fee==="yes"?"Fee":t.fee==="no"?"Free":"";
-    m.bindPopup(`<div class="mpop"><b>${esc(t.name||ACC_TYPES[type].label)}</b><div class="small muted">${ACC_TYPES[type].label}${t.operator?" · "+esc(t.operator):""}${fee?" · "+fee:""}</div><div class="row" style="margin-top:8px"><a class="btn ghost small" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}" target="_blank" rel="noopener" style="text-decoration:none">Directions</a>${MAP.mode==="float"?"":`<button class="btn ghost small" type="button" data-floatfrom="${lat},${lon}">Float from here</button>`}</div><div class="small muted" style="margin-top:6px">From OpenStreetMap. Check signs on site.</div></div>`);
-    m.on("popupopen",()=>{const bt=document.querySelector(`[data-floatfrom="${lat},${lon}"]`);if(bt)bt.onclick=()=>{MAP.map.closePopup();setMode("float");floatTap(window.L.latLng(lat,lon))}});
+  for(const d of data){
+    const m=L.marker([d.lat,d.lon],{icon:accIcon(d.type)}).addTo(ACCESS.layer);
+    const id=`${d.lat.toFixed(5)},${d.lon.toFixed(5)}`;
+    m.bindPopup(`<div class="mpop"><b>${esc(d.name||ACC_TYPES[d.type].label)}</b><div class="small muted">${esc(d.sub||ACC_TYPES[d.type].label)}${d.fee?" · "+d.fee:""}${d.open?" · "+(d.open==="open"?"Open":"Closed now"):""}</div>
+      <div class="row" style="margin-top:8px"><a class="btn ghost small" href="https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lon}" target="_blank" rel="noopener" style="text-decoration:none">Directions</a>${d.type==="slipway"||d.type==="fishing"?`<button class="btn ghost small" type="button" data-floatfrom="${id}">Float from here</button>`:""}${d.url?`<a class="btn ghost small" href="${esc(d.url)}" target="_blank" rel="noopener" style="text-decoration:none">Details</a>`:""}</div>
+      <div class="small muted" style="margin-top:6px">From ${esc(d.src)}. Check signs on site.</div></div>`);
+    m.on("popupopen",()=>{const bt=document.querySelector(`[data-floatfrom="${id}"]`);if(bt)bt.onclick=()=>{MAP.map.closePopup();setMode("float");floatTap(window.L.latLng(d.lat,d.lon))}});
   }
 }
 
@@ -2233,6 +2245,125 @@ async function findNearby(){
   else{const o=origin();go(o.lat,o.lon)}
 }
 function titleCase(s){return String(s||"").toLowerCase().replace(/\b(\w)/g,m=>m.toUpperCase()).replace(/\b(Nr|Ab|Bl|Blw|Abv|Or|Wa|Id|Ca|Usgs)\b/g,m=>({Nr:"near",Ab:"above",Abv:"above",Bl:"below",Blw:"below",Or:"OR",Wa:"WA",Id:"ID",Ca:"CA",Usgs:"USGS"})[m])}
+
+/* ---------- GAME PLAN (plain-language advice) ---------- */
+const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
+function gamePlan(r,rec){
+  const c=conditions(r);const ctx=rec.ctx||{};const m=ctx.month??new Date().getMonth();
+  const wt=ctx.wtF??c.wtF;const fk=ctx.flowK??flowKey(r,c.cfs);const cl=clarityOf(r);const off=cl&&cl.k!=="good";
+  const cold=wt!=null?wt<45:[11,0,1].includes(m);const summer=[6,7,8].includes(m);
+  const lead=rec.top[0]?.b;const leadS=rec.top[0]?.s||0;
+  const fly=f=>f?`${f.f.name} #${sizeMid(f.f.sizes)}`:"";
+  if(offSeason(r,m))return "Closed or snowed in this time of year. Pick a water that's fishing.";
+  if(wt!=null&&wt>=68)return `The water is ${fmt(wt)}°, too warm for trout. They stress and often die after release. Fish somewhere colder, or come back at first light.`;
+  if(r.lake)return rec.why;
+  if(wt!=null&&wt>=65)var hot=` The water is ${fmt(wt)}°, so fish early, land fish fast and keep them wet.`;
+  const cond=fk==="high"?(off?"The river is running high and off-color":"The river is running high"):off?"The water is off-color":fk==="low"?"The river is low and clear":cold?"The water is cold":fk==="ideal"?"The river is in good shape":"Conditions look fishable";
+  const where=fk==="high"||off?"fish the soft water along the banks, inside bends and behind rocks, where trout get out of the push"
+    :fk==="low"?"fish riffles and the heads of runs for oxygen and cover. Stay back, keep low and go to longer, lighter tippet"
+    :cold?"trout are holding in slow, deep runs and tailouts, so fish them in the middle of the day when the water warms"
+    :summer?"trout move into faster, oxygen-rich riffles, so fish early and late"
+    :"work the seams and foam lines where fast water meets slow";
+  const emerger=rec.dries.find(x=>x.f.type==="Emerger"),dry=rec.dries.find(x=>x.f.type==="Dry");
+  const stone=FLIES.find(f=>f.name==="Pat's Rubber Legs");const streamer=rec.streamers[0];
+  let what,size="";
+  const hatchy=["bwo","pmd","caddis","midge","greendrake","marchbrown","callibaetis","hex","golden","salmonfly"].includes(lead)&&leadS>=2.3;
+  if(fk==="high"||off){what=`skip the dry flies and fish deep. Tie on a dark stonefly nymph like a ${stone.name} #${sizeMid(stone.sizes)}${streamer?`, or swing a ${fly(streamer)} along the edges`:""}`}
+  else if(hatchy&&(emerger||dry)){
+    const win=bestWindowText(r).replace("Best window ","from ").replace("Best tomorrow ","tomorrow from ");
+    what=`watch for rising fish ${win||"in the warmest part of the day"}. ${emerger?`Start with an emerger (${fly(emerger)}). Bugs stuck in the surface film are the easiest meal on the river`:""}${emerger&&dry?`, then switch to a ${fly(dry)} if they're taking adults off the top`:dry?`Fish a ${fly(dry)}`:""}. Until you see rises, nymph`;
+    size=" Match the size and shape of the bugs first; color matters less.";
+  } else {
+    const n=rec.nymphs.slice(0,2).map(fly).filter(Boolean);
+    what=`nymph near the bottom with ${n.join(" and ")} under an indicator set about one and a half times the water depth. Add weight until you feel it tick bottom; that's where trout eat most of their food`;
+  }
+  return `${cond} today: ${where}. ${cap(what)}.${size}${hot||""}`;
+}
+
+/* ---------- LEARN ---------- */
+function readingWaterSVG(){
+  return `<svg viewBox="0 0 340 430" width="100%" role="img" aria-label="Diagram of a trout stream showing where fish hold">
+  <defs><linearGradient id="rw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd3d6"/><stop offset=".45" stop-color="#3f8f99"/><stop offset=".7" stop-color="#2b6f7a"/><stop offset="1" stop-color="#8cc7cb"/></linearGradient></defs>
+  <path d="M120 0 C 100 80, 190 120, 170 200 C 150 280, 70 300, 110 430 L 230 430 C 200 320, 280 280, 270 200 C 260 110, 190 70, 220 0 Z" fill="url(#rw)"/>
+  <g stroke="#fff" stroke-width="2" opacity=".75" fill="none" stroke-linecap="round">
+    <path d="M140 20 l12 -4 l12 4"/><path d="M165 40 l12 -4 l12 4"/><path d="M135 55 l12 -4 l12 4"/><path d="M175 68 l12 -4 l12 4"/>
+  </g>
+  <path d="M190 90 C 175 150, 215 200, 200 260 C 190 300, 160 330, 170 390" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="3 6"/>
+  <circle cx="232" cy="150" r="11" fill="#6b5a4a"/><path d="M222 168 c6 10 16 10 22 0" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/>
+  <path d="M262 190 C 268 230, 262 260, 248 290" fill="none" stroke="#3b2f22" stroke-width="5"/>
+  <g fill="#e5603f">
+    <path d="M196 180 q8 -4 16 0 q-8 4 -16 0z M212 180 l5 -3 v6z"/>
+    <path d="M226 180 q8 -4 16 0 q-8 4 -16 0z M242 180 l5 -3 v6z"/>
+    <path d="M168 238 q8 -4 16 0 q-8 4 -16 0z M184 238 l5 -3 v6z"/>
+    <path d="M238 262 q8 -4 16 0 q-8 4 -16 0z M254 262 l5 -3 v6z"/>
+    <path d="M150 360 q8 -4 16 0 q-8 4 -16 0z M166 360 l5 -3 v6z"/>
+    <path d="M140 120 q8 -4 16 0 q-8 4 -16 0z M156 120 l5 -3 v6z"/>
+  </g>
+  <g font-size="11" font-weight="700">
+    <text x="4" y="40">Riffle</text><text x="4" y="54" font-weight="400" font-size="10">fast, shallow, choppy</text>
+    <text x="4" y="125">Head of the run</text><text x="4" y="139" font-weight="400" font-size="10">fish wait for food</text>
+    <text x="268" y="128">Pocket</text><text x="268" y="142" font-weight="400" font-size="10">soft water</text><text x="268" y="154" font-weight="400" font-size="10">behind a rock</text>
+    <text x="4" y="235">Seam / foam line</text><text x="4" y="249" font-weight="400" font-size="10">fast meets slow,</text><text x="4" y="261" font-weight="400" font-size="10">food lines up here</text>
+    <text x="280" y="250">Undercut</text><text x="280" y="264">bank</text>
+    <text x="4" y="330">Pool</text><text x="4" y="344" font-weight="400" font-size="10">deep, slow; winter</text>
+    <text x="196" y="410">Tailout</text><text x="196" y="423" font-weight="400" font-size="10">evening risers</text>
+  </g>
+  <g stroke="var(--ink)" stroke-width="1" opacity=".6"><path d="M108 236 L165 238"/><path d="M276 246 L258 262"/><path d="M98 122 L138 120"/><path d="M266 136 L245 150"/></g>
+  <text x="170" y="196" font-size="9" fill="#fff" text-anchor="middle" opacity=".9">current</text>
+  </svg>`;
+}
+const BUG_BASICS=[
+ ["Mayflies","Upright wings like little sailboats and 2 or 3 long tails. Hatch most days in spring and fall (blue-winged olives) and summer (PMDs).","Nymph: Pheasant Tail. Emerger: RS2 or cripple. Adult: Parachute Adams."],
+ ["Caddis","Wings fold over the back like a tent; they flutter like moths. Best in the evening from late spring through fall.","Pupa: Sparkle Pupa or a swung soft hackle. Adult: Elk Hair Caddis, skated at dusk."],
+ ["Stoneflies","Big, with two short tails and wings laid flat. Nymphs crawl to the banks to hatch. Salmonflies and goldens in late spring.","Nymph: Pat's Rubber Legs, all year and in high water. Adult: Chubby Chernobyl."],
+ ["Midges","Tiny, like gnats. They hatch every month and feed trout all winter.","Larva or pupa: Zebra Midge #18–22. Adult: Griffith's Gnat."],
+ ["Terrestrials","Hoppers, ants and beetles that fall in from the banks in late summer.","Morrish Hopper or a foam ant tight to grassy banks."],
+ ["Baitfish and leeches","Sculpins, minnows and leeches. Big trout eat them in low light and high water.","Woolly Bugger, Sculpzilla, or a Balanced Leech in lakes."]
+];
+function renderLearnExtras(){
+  const el=$("#learnTop");if(!el||el.dataset.done)return;el.dataset.done=1;
+  el.innerHTML=`
+   <details class="fold" open><summary>Read the water</summary><div class="body">
+     <p style="margin:0">The better question is usually not "what fly?" but "where are the fish?" Trout want to eat without fighting the current. Look for soft water right next to fast water.</p>
+     ${readingWaterSVG()}
+     <ul style="margin:0;padding-left:20px;display:grid;gap:6px">
+       <li><b>Seams and foam lines.</b> Where fast water meets slow, food funnels into a line. Bubbles show you where it is.</li>
+       <li><b>Pocket water.</b> The soft spot behind and in front of boulders.</li>
+       <li><b>Drop-offs and the head of a run.</b> Where a riffle dumps into deeper water.</li>
+       <li><b>Undercut banks and tailouts.</b> Big fish hide under banks; the tailout is where fish rise in the evening.</li>
+       <li><b>Seasons.</b> Winter fish sit in slow, deep pools and runs. Summer fish move into faster, oxygen-rich riffles.</li>
+     </ul></div></details>
+   <details class="fold"><summary>Get a drag-free drift</summary><div class="body">
+     <p style="margin:0">Most trout are caught 20 to 40 feet away. How the fly drifts matters far more than how far you cast.</p>
+     <ul style="margin:0;padding-left:20px;display:grid;gap:6px">
+       <li><b>Watch the bubbles.</b> If your fly moves faster or slower than the foam next to it, it's dragging, and trout notice.</li>
+       <li><b>Mend.</b> Right after the cast, flip the line upstream so the current doesn't pull the fly. Mend again as it drifts.</li>
+       <li><b>Get deep.</b> Trout do most of their eating near the bottom. Set your indicator about one and a half times the depth, and add split shot or a heavier bead until you feel the bottom now and then.</li>
+       <li><b>Shorten up.</b> Keep as little line on the water as you can. Lift the rod tip to hold line off the faster current.</li>
+     </ul></div></details>
+   <details class="fold"><summary>Bug basics</summary><div class="body">
+     <p style="margin:0">You don't need Latin names. Learn the four main groups, plus land bugs and baitfish, and know which stage the fish are eating.</p>
+     <div class="grid">${BUG_BASICS.map(([h,a,b])=>`<div class="card stack" style="background:var(--sunk);box-shadow:none"><h3>${h}</h3><p class="small" style="margin:0">${a}</p><p class="small" style="margin:0"><b>Flies:</b> ${b}</p></div>`).join("")}</div>
+     <div class="note small"><b>Life stages.</b> Nymphs live underwater and are most of a trout's diet. Emergers are stuck in the surface film on their way out, and they're often the most productive stage during a hatch. Adults (dries) ride on top. If fish are rising but refusing your dry, try an emerger.</div>
+     <div class="note small"><b>Size and shape first.</b> Getting the right size and silhouette in front of a fish matters much more than matching the exact color.</div>
+   </div></details>
+   <details class="fold"><summary>Take care of the fish</summary><div class="body">
+     <ul style="margin:0;padding-left:20px;display:grid;gap:6px">
+       <li><b>Keep them wet.</b> Hold the fish in the water and keep air time to a few seconds for a photo.</li>
+       <li><b>Use a rubber net</b> and wet your hands before you touch a fish. Knotted nylon nets strip their protective slime.</li>
+       <li><b>Pinch your barbs.</b> Barbless hooks come out fast and do less damage. Some rivers require them.</li>
+       <li><b>Carry a thermometer.</b> Above 65° trout get stressed; land them fast. At 68° and up, stop fishing for trout.</li>
+       <li><b>Release them pointed into the current</b> until they swim off on their own.</li>
+     </ul></div></details>
+   <details class="fold"><summary>River etiquette</summary><div class="body">
+     <ul style="margin:0;padding-left:20px;display:grid;gap:6px">
+       <li><b>Give people room.</b> If you can make a long cast to someone, you're too close. Ask before you step in.</li>
+       <li><b>Don't low-hole.</b> Never jump in just downstream of someone working down a run, or just upstream of someone working up.</li>
+       <li><b>Boats and waders.</b> Drift boats should pass behind wading anglers, on the far side, and quietly. Waders, step back toward shore when a boat has no other line.</li>
+       <li><b>At the ramp,</b> rig your boat before you back down, and launch and clear out quickly.</li>
+       <li><b>Leave no trace.</b> Pack out line and tippet, which tangles birds and wildlife.</li>
+     </ul></div></details>`;
+}
 
 /* ---------- theme, more, install ---------- */
 function applyTheme(){const t=store.get("theme","");if(t)document.documentElement.setAttribute("data-theme",t);else document.documentElement.removeAttribute("data-theme")}
