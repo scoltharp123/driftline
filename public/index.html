@@ -2123,8 +2123,10 @@ async function loadAccess(){
   if(!data){
     if(ACCESS.busy)return;ACCESS.busy=true;
     const q=`[out:json][timeout:20];(nwr["leisure"="slipway"](${bb});nwr["leisure"="fishing"](${bb});nwr["tourism"="camp_site"](${bb});${withParking?`nwr["amenity"="parking"]["access"!="private"](${bb});`:""});out center 400;`;
-    try{const j=await getJSON("https://overpass-api.de/api/interpreter?data="+encodeURIComponent(q),25000);data=j.elements||[];ACCESS.cache.set(ck,data)}
-    catch(e){data=null}finally{ACCESS.busy=false}
+    for(const host of ["https://overpass-api.de/api/interpreter","https://overpass.private.coffee/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://maps.mail.ru/osm/tools/overpass/api/interpreter"]){
+      try{const j=await getJSON(host+"?data="+encodeURIComponent(q),12000);if(Array.isArray(j.elements)){data=j.elements;ACCESS.cache.set(ck,data);break}}catch(e){}
+    }
+    ACCESS.busy=false;
     if(!data){if(note)note.textContent="Access points couldn't load. Try again in a minute.";return}
   }
   ACCESS.layer.clearLayers();
@@ -2173,8 +2175,8 @@ function floatTap(ll){
   L.polyline(pts,{color:"#e5603f",weight:7,opacity:.95}).addTo(FLOAT.layer);
   L.marker(s.p,{icon:L.divIcon({className:"",html:`<span class="accic" style="background:#b5372d;width:30px;height:30px">Out</span>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(FLOAT.layer);
   const r=a.r;const c=conditions(r);const f=r.flow||{};const mid=f.idealLo!=null?(f.idealLo+f.idealHi)/2:null;
-  const speed=Math.max(1,Math.min(4,mid&&c.cfs?2*Math.sqrt(c.cfs/mid):2));
-  const drift=mi/speed,fishing=mi/(speed*.45);
+  const q=c.cfs||mid||500;const speed=Math.max(1.5,Math.min(5,1.5+.55*Math.log(Math.max(q,100)/100)));
+  const drift=mi/speed,fishing=drift/.6;
   const h=x=>x<1?Math.round(x*60)+" min":(Math.round(x*2)/2)+" hr";
   const warn=!downstream?"That take-out is upstream of the put-in. Rivers only float one way. ":"";
   const pass=/Boater Pass/.test(r.regs)?"A Deschutes Boater Pass is required for every person. ":"";

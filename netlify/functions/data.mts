@@ -10,6 +10,9 @@ const ALLOWED = new Set([
   "router.project-osrm.org",
   "api.water.usgs.gov",
   "overpass-api.de",
+  "overpass.private.coffee",
+  "overpass.kumi.systems",
+  "maps.mail.ru",
 ]);
 
 export default async (req: Request) => {
