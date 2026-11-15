@@ -13,6 +13,8 @@ const ALLOWED = new Set([
   "overpass.private.coffee",
   "overpass.kumi.systems",
   "maps.mail.ru",
+  "arcgis.deq.state.or.us",
+  "apps.fs.usda.gov",
 ]);
 
 export default async (req: Request) => {
