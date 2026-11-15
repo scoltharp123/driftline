@@ -226,6 +226,7 @@ svg text{fill:var(--ink);font-family:var(--body)}
 .pinic{display:grid;place-items:center;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);color:#fff;font-weight:800;font-family:var(--display);border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
 .pinic{line-height:1}
 .leaflet-container{font:inherit}
+.accic{display:grid;place-items:center;width:22px;height:22px;border-radius:7px;color:#fff;font-weight:800;font-size:.72rem;font-family:var(--display);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
 .leaflet-popup-content{margin:12px 14px;min-width:190px}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface);color:var(--ink)}
 .mpop .btn{min-height:34px}
@@ -289,7 +290,7 @@ svg text{fill:var(--ink);font-family:var(--body)}
   <!-- RIVERS -->
   <section class="view" id="v-rivers">
     <div><h2>Waters</h2><p class="lede">Live flow, temperature and what's hatching on every river and lake.</p></div>
-    <nav class="seg" aria-label="Rivers view"><a href="#rivers" aria-current="true">List</a><a href="#map">Map</a></nav>
+    <nav class="seg" aria-label="Rivers view"><a href="#rivers" aria-current="true">List</a><a href="#gauges">Gauges</a><a href="#map">Map</a></nav>
     <div class="list" id="riverGrid"></div>
     <details class="fold"><summary>Add a river from a USGS gauge</summary><div class="body">
       <p class="muted small">Find the site number on waterdata.usgs.gov. Set the ideal flow range from local knowledge so Driftline can rate it.</p>
@@ -309,24 +310,35 @@ svg text{fill:var(--ink);font-family:var(--body)}
   <!-- RIVER DETAIL -->
   <section class="view" id="v-river"></section>
 
+  <!-- GAUGES -->
+  <section class="view" id="v-gauges">
+    <div><h2>Waters</h2><p class="lede">Every gauge at a glance: flow, the last three days and the 24-hour change.</p></div>
+    <nav class="seg" aria-label="Rivers view"><a href="#rivers">List</a><a href="#gauges" aria-current="true">Gauges</a><a href="#map">Map</a></nav>
+    <div class="list" id="gaugeList"></div>
+    <div class="card stack"><div class="row" style="justify-content:space-between"><div><h3>Find gauges near me</h3><div class="small muted">Live USGS stream gauges within about 40 miles.</div></div><button class="btn small" type="button" id="findNear">Search</button></div><div id="nearbyOut"></div></div>
+  </section>
+
   <!-- MAP -->
   <section class="view" id="v-map">
     <div><h2>Waters</h2><p class="lede">Flows, public land, your crew's pins and a float measuring tool.</p></div>
-    <nav class="seg" aria-label="Rivers view"><a href="#rivers">List</a><a href="#map" aria-current="true">Map</a></nav>
+    <nav class="seg" aria-label="Rivers view"><a href="#rivers">List</a><a href="#gauges">Gauges</a><a href="#map" aria-current="true">Map</a></nav>
     <div class="mapwrap">
       <div id="lmap" role="application" aria-label="Map of waters"></div>
       <div class="maptools" aria-label="Map tools">
         <button type="button" id="mLocate" title="Show where I am" aria-label="Show where I am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
         <button type="button" id="mPin" data-tool="pin" title="Drop a pin" aria-label="Drop a pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg></button>
+        <button type="button" id="mFloat" data-tool="float" title="Plan a float" aria-label="Plan a float"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c3 4 15 4 18 0z"/><path d="M8 13l-2-7M16 13l2-7"/><path d="M2 19c2 1.4 4 1.4 6 0s4-1.4 6 0 4 1.4 6 0"/></svg></button>
         <button type="button" id="mMeasure" data-tool="measure" title="Measure a float" aria-label="Measure a float"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8" width="19" height="8" rx="1.5" transform="rotate(-30 12 12)"/><path d="M8.6 9.7l1 1.7M11.2 8.2l1.5 2.6M13.8 6.7l1 1.7"/></svg></button>
         <button type="button" id="mSave" title="Save this area for offline" aria-label="Save this area for offline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 19h16"/></svg></button>
       </div>
       <div class="maplayers" role="group" aria-label="Map layers">
-        <button type="button" data-base="topo">Topo</button><button type="button" data-base="sat">Satellite</button><button type="button" id="mLand">Public land</button>
+        <button type="button" data-base="topo">Topo</button><button type="button" data-base="sat">Satellite</button><button type="button" id="mLand">Public land</button><button type="button" id="mLines">Rivers</button><button type="button" id="mAcc">Access</button>
       </div>
     </div>
     <div id="mapSheet" class="card hidden"></div>
-    <div class="small muted">Shaded areas are public land (BLM, Forest Service, state and other agencies). Unshaded land may be private. Long-press the map to drop a pin. Always respect signs and stream access laws.</div>
+    <div class="small muted" id="accNote"></div>
+    <div class="row small" style="gap:14px"><span class="row" style="gap:6px"><i style="width:22px;height:5px;border-radius:3px;background:#2e9e57;display:inline-block"></i>Wild trout river</span><span class="row" style="gap:6px"><i style="width:22px;height:5px;border-radius:3px;background:#2f6fd6;display:inline-block"></i>Tailwater</span><span class="row" style="gap:6px"><i style="width:22px;height:5px;border-radius:3px;background:#14a3a8;display:inline-block"></i>Spring creek</span><span class="row" style="gap:6px"><i style="width:22px;height:9px;border-radius:3px;background:#2e9e57;box-shadow:0 0 0 2.5px #f2c14e;display:inline-block"></i>Special rules (fly only or catch and release)</span></div>
+    <div class="small muted">Shaded land is public (BLM, Forest Service, state and others); unshaded land may be private. B, F, C and P markers are boat ramps, fishing access, campgrounds and parking from OpenStreetMap. Long-press the map to drop a pin. Respect signs and Oregon's stream access laws.</div>
     <div class="row small" style="gap:14px"><span class="row" style="gap:6px"><span class="dot" style="color:#2b7a4b"></span>Fishable</span><span class="row" style="gap:6px"><span class="dot" style="color:#c08a12"></span>Low or high</span><span class="row" style="gap:6px"><span class="dot" style="color:#b5372d"></span>Blown out</span><span class="row" style="gap:6px"><span class="dot" style="color:#7b8a87"></span>No reading</span></div>
   </section>
 
@@ -1012,7 +1024,7 @@ async function renderRiver(id){
      ${cl?`<div class="row" style="gap:10px">${pill({k:cl.k,label:"Clarity: "+cl.label})}<span class="small muted">${esc(cl.why)}${cl.sensor?"":" (estimate)"}</span></div>`:""}
    </div>`:""}`})()}
    <div class="card stack" id="bestTimes"><div class="section-h"><h3>Best times to fish</h3><span class="seg" style="padding:3px;gap:3px"><a href="#" data-bt="0" aria-current="true" style="padding:5px 10px">Today</a><a href="#" data-bt="1" style="padding:5px 10px">Tomorrow</a></span></div><div id="btBody">${bestTimesHTML(r,0)}</div><p class="small muted" style="margin:0">Based on the hourly forecast, pressure trend, this month's hatches and moon timing. A guide, not a promise.</p></div>
-   <p class="lede" style="margin:0">${esc(r.about)}</p>
+   <div class="stack" style="gap:8px"><div>${(()=>{if(r.lake)return `<span class="chip">Stillwater</span>`;const cl=classOf(r);return `<span class="chip" style="background:${cl.c};color:#fff">${cl.label}</span>${cl.fly?`<span class="chip" style="background:#f2c14e;color:#3a2c00">Fly only (part)</span>`:""}${cl.cr?`<span class="chip" style="background:#f2c14e;color:#3a2c00">Catch and release</span>`:""}${DAMS[r.id]?`<span class="chip">Below ${esc(DAMS[r.id])}</span>`:""}`})()}</div><p class="lede" style="margin:0">${esc(r.about)}</p></div>
    <div class="stack"><h3>What to tie on</h3>${recBlock(r,rec,{noTitle:true})}</div>
    ${crewMode()?`<div class="stack"><div class="section-h"><h3>Crew on this water</h3><a href="#report-new">Post a report</a></div>${crewIt.length?crewIt.map(feedItem).join(""):'<div class="card small muted">Nobody in the crew has posted here in the last four months.</div>'}</div>`:""}
    ${wx?`<div class="card stack"><h3>Forecast</h3><div class="scroll"><table><tr><th>Day</th><th>High / low</th><th>Rain</th><th>Wind</th></tr>${wx.time.map((d,i)=>`<tr><td>${new Date(d+"T12:00").toLocaleDateString(undefined,{weekday:"short"})}</td><td class="num">${fmt(wx.temperature_2m_max[i])}° / ${fmt(wx.temperature_2m_min[i])}°</td><td class="num">${fmt(wx.precipitation_probability_max[i])}%</td><td class="num">${fmt(wx.wind_speed_10m_max[i])} mph</td></tr>`).join("")}</table></div></div>`:""}
@@ -1370,7 +1382,9 @@ async function renderMap(){
     const fit=RIVERS.filter(r=>r.lat!=null).map(r=>[r.lat,r.lon]);if(fit.length)MAP.map.fitBounds(fit,{padding:[30,30],maxZoom:10});
   }
   setTimeout(()=>MAP.map.invalidateSize(),60);
-  drawMarkers();drawPins();syncLayerButtons();
+  drawMarkers();drawPins();drawLines();syncLayerButtons();
+  if(!MAP.hooked){MAP.hooked=true;let t;MAP.map.on("moveend",()=>{clearTimeout(t);t=setTimeout(loadAccess,500)});loadAllLines()}
+  loadAccess();
 }
 function setBase(k){
   const L=window.L;const t=TILES[k]||TILES.topo;
@@ -1387,6 +1401,8 @@ function toggleLand(on){
 function syncLayerButtons(){
   $$("[data-base]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.base===MAP.baseKey?"true":"false"));
   const lb=$("#mLand");if(lb)lb.setAttribute("aria-pressed",MAP.land?"true":"false");
+  const ll=$("#mLines");if(ll)ll.setAttribute("aria-pressed",store.get("mapLines",true)?"true":"false");
+  const la=$("#mAcc");if(la)la.setAttribute("aria-pressed",store.get("mapAccess",true)?"true":"false");
 }
 const RCOL={good:"#2b7a4b",warn:"#c08a12",bad:"#b5372d",na:"#7b8a87"};
 function drawMarkers(){
@@ -1418,8 +1434,11 @@ function setMode(m){
   MAP.mode=m;$$(".maptools [data-tool]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tool===m?"true":"false"));
   $("#lmap").classList.toggle("crosshair",!!m);
   if(m!=="measure"&&MAP.line){MAP.map.removeLayer(MAP.line);MAP.line=null;MAP.measure=[]}
+  if(m!=="float"&&FLOAT.layer){FLOAT.layer.clearLayers();FLOAT.a=FLOAT.b=null}
+  if(m==="float"&&!store.get("mapLines",true)){store.set("mapLines",true);drawLines()}
   if(m==="pin")sheet(`<div class="row" style="justify-content:space-between"><b>Tap the map where the pin goes</b><button class="btn ghost small" type="button" id="cancelMode">Cancel</button></div>`);
   else if(m==="measure"){MAP.measure=[];sheet(measureSheet())}
+  else if(m==="float"){FLOAT.a=FLOAT.b=null;sheet(`<div class="row" style="justify-content:space-between"><div><b>Plan a float</b><div class="small muted">Tap your put-in on a colored river line, or tap a boat ramp (B) and choose Float from here.</div></div><button class="btn ghost small" type="button" id="cancelMode">Cancel</button></div>`)}
   else sheet("");
   const c=$("#cancelMode");if(c)c.onclick=()=>setMode(null);
 }
@@ -1436,6 +1455,7 @@ function onMapClick(e){
     if(!MAP.line)MAP.line=window.L.polyline(MAP.measure,{color:"#e5603f",weight:4,dashArray:"6 8"}).addTo(MAP.map);else MAP.line.setLatLngs(MAP.measure);
     sheet(measureSheet());bindMeasure();
   } else if(MAP.mode==="pin"){startPin(e.latlng)}
+  else if(MAP.mode==="float"){floatTap(e.latlng)}
 }
 function startPin(ll){
   setMode(null);
@@ -1485,6 +1505,10 @@ function initMapTools(){
   $("#mLocate").onclick=locateMe;
   $("#mPin").onclick=()=>setMode(MAP.mode==="pin"?null:"pin");
   $("#mMeasure").onclick=()=>setMode(MAP.mode==="measure"?null:"measure");
+  $("#mFloat").onclick=()=>setMode(MAP.mode==="float"?null:"float");
+  $("#mLines").onclick=()=>{store.set("mapLines",!store.get("mapLines",true));drawLines()};
+  $("#mAcc").onclick=()=>{const on=!store.get("mapAccess",true);store.set("mapAccess",on);if(!on&&ACCESS.layer){ACCESS.layer.clearLayers();$("#accNote").textContent=""}else loadAccess();syncLayerButtons()};
+  $("#findNear").onclick=findNearby;
   $("#mSave").onclick=saveOffline;
 }
 
@@ -1619,8 +1643,8 @@ function fillSelects(){
   for(const id of ["hatchRiver","rfRiver","bugRiver","lgRiver","tpRiver","repRiver"]){const s=$("#"+id);const v=s.value;s.innerHTML=opts;if(v&&riverById(v))s.value=v}
   $("#flyNames").innerHTML=FLIES.map(f=>`<option value="${esc(f.name)} #${esc(f.sizes.split("–")[0])}">`).join("");
 }
-const VIEWS=["home","crew","rivers","hatches","flies","bugid","guide","log","trip","learn","map","more","install","alerts","box"];
-const TAB_OF={home:"home",rivers:"rivers",river:"rivers",map:"rivers",flies:"flies",bugid:"flies",box:"flies",crew:"crew",log:"crew",more:"more",guide:"more",trip:"more",hatches:"more",learn:"more",install:"more",alerts:"more"};
+const VIEWS=["home","crew","rivers","gauges","hatches","flies","bugid","guide","log","trip","learn","map","more","install","alerts","box"];
+const TAB_OF={home:"home",rivers:"rivers",gauges:"rivers",river:"rivers",map:"rivers",flies:"flies",bugid:"flies",box:"flies",crew:"crew",log:"crew",more:"more",guide:"more",trip:"more",hatches:"more",learn:"more",install:"more",alerts:"more"};
 function route(){
   let h=(location.hash||"#home").slice(1);
   if(h==="today")h="home";
@@ -1634,6 +1658,7 @@ function route(){
   if(view==="install")renderInstallHow();
   if(view==="alerts")renderAlerts();
   if(view==="box")renderBox();
+  if(view==="gauges")renderGauges();
   if(view==="crew"){syncCrewChrome();renderFeed()}
   if(view==="rivers")renderRivers();
   if(view==="river")renderRiver(h.slice(6));
@@ -2026,6 +2051,186 @@ function initBox(){
   $("#bxName").onchange=syncSizes;syncSizes();
   $("#boxForm").onsubmit=e=>{e.preventDefault();const n=$("#bxName").value,s=+$("#bxSize").value,c=+$("#bxCount").value||1;const cur=BOX.find(x=>boxKey(x)===boxKey({name:n,size:s}));setBoxCount(n,s,(cur?.count||0)+c);renderBox();toast(`Added ${c} ${n} #${s}`)};
 }
+
+/* ---------- CLASSIFIED RIVER LINES (USGS NLDI) ---------- */
+const REACH={"lower-deschutes":[2,28],maupin:[85,0],metolius:[50,0],crooked:[1,18],"fall-river":[10,8],"upper-deschutes":[3,18],mckenzie:[16,22],williamson:[20,15]};
+const CLASSES={
+  tail:{label:"Tailwater",c:"#2f6fd6"},
+  spring:{label:"Spring creek",c:"#14a3a8"},
+  wild:{label:"Wild trout river",c:"#2e9e57"}
+};
+function classOf(r){
+  const k=r.type==="tailwater"?"tail":r.type==="spring"?"spring":"wild";
+  const regs=String(r.regs||"").toLowerCase();
+  return {k,...CLASSES[k],fly:/fly fishing only/.test(regs),cr:/catch and release/.test(regs)};
+}
+const LINES={};
+function chainLines(feats){
+  const segs=feats.map(f=>f.geometry?.type==="MultiLineString"?f.geometry.coordinates.flat():f.geometry?.coordinates).filter(c=>Array.isArray(c)&&c.length>1);
+  if(!segs.length)return [];
+  const key=p=>p[0].toFixed(4)+","+p[1].toFixed(4);
+  const byStart=new Map(segs.map(s=>[key(s[0]),s]));const ends=new Set(segs.map(s=>key(s[s.length-1])));
+  let head=segs.find(s=>!ends.has(key(s[0])))||segs[0];const out=[];const used=new Set();
+  while(head&&!used.has(head)){used.add(head);out.push(...(out.length?head.slice(1):head));head=byStart.get(key(head[head.length-1]))}
+  if(used.size<segs.length*.6){return segs.sort((a,b)=>b.length-a.length)[0]}
+  return out;
+}
+async function loadLine(r){
+  if(LINES[r.id])return LINES[r.id];
+  const cached=store.get("line:"+r.id,null);if(cached&&cached.v===1){LINES[r.id]=cached.c;return cached.c}
+  if(!r.gauge)return null;
+  const [up,down]=REACH[r.id]||[10,10];
+  const base=`https://api.water.usgs.gov/nldi/linked-data/nwissite/USGS-${r.gauge}/navigation`;
+  try{
+    const parts=await Promise.all([up?getJSON(`${base}/UM/flowlines?distance=${up}`,15000).catch(()=>null):null,down?getJSON(`${base}/DM/flowlines?distance=${down}`,15000).catch(()=>null):null]);
+    const seen=new Set();const feats=[];
+    for(const p of parts)for(const f of (p?.features||[])){const id=f.properties?.nhdplus_comid??JSON.stringify(f.geometry?.coordinates?.[0]);if(seen.has(id))continue;seen.add(id);feats.push(f)}
+    let c=chainLines(feats);if(c.length<2)return null;
+    c=c.filter((_,i)=>i%2===0||i===c.length-1).map(p=>[+p[1].toFixed(5),+p[0].toFixed(5)]);
+    LINES[r.id]=c;store.set("line:"+r.id,{v:1,c});return c;
+  }catch(e){return null}
+}
+function drawLines(){
+  if(!MAP.map)return;const L=window.L;
+  if(!MAP.lines)MAP.lines=L.layerGroup();
+  MAP.lines.clearLayers();
+  if(!store.get("mapLines",true)){MAP.map.removeLayer(MAP.lines);syncLayerButtons();return}
+  MAP.lines.addTo(MAP.map);
+  for(const r of RIVERS){const c=LINES[r.id];if(!c)continue;const cl=classOf(r);
+    if(cl.fly||cl.cr)L.polyline(c,{color:"#f2c14e",weight:9,opacity:.9,interactive:false}).addTo(MAP.lines);
+    const ln=L.polyline(c,{color:cl.c,weight:5,opacity:.95}).addTo(MAP.lines);
+    ln.bindTooltip(`${esc(r.name)} · ${cl.label}${cl.fly?" · fly only":""}${cl.cr?" · catch and release":""}`,{sticky:true});
+    ln.on("click",e=>{if(MAP.mode)onMapClick(e);else location.hash="river-"+r.id});
+  }
+  MAP.markers?.bringToFront?.();syncLayerButtons();
+}
+async function loadAllLines(){for(const r of RIVERS.filter(r=>r.gauge)){if(!LINES[r.id]){await loadLine(r);drawLines()}}}
+
+/* ---------- ACCESS LAYER (OpenStreetMap) ---------- */
+const ACCESS={cache:new Map(),layer:null,busy:false};
+const ACC_TYPES={slipway:{label:"Boat ramp",c:"#0f6b73",g:"B"},fishing:{label:"Fishing access",c:"#2b7a4b",g:"F"},camp:{label:"Campground",c:"#7a5bb5",g:"C"},parking:{label:"Parking",c:"#3a6fb0",g:"P"}};
+function accIcon(t){const a=ACC_TYPES[t];return window.L.divIcon({className:"",html:`<span class="accic" style="background:${a.c}">${a.g}</span>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-10]})}
+async function loadAccess(){
+  if(!MAP.map||!store.get("mapAccess",true))return;const L=window.L;
+  if(!ACCESS.layer)ACCESS.layer=L.layerGroup().addTo(MAP.map);
+  const z=MAP.map.getZoom();const note=$("#accNote");
+  if(z<11){ACCESS.layer.clearLayers();if(note)note.textContent="Zoom in to see boat ramps, fishing access and campgrounds.";return}
+  if(note)note.textContent="";
+  const b=MAP.map.getBounds();const r2=x=>Math.round(x*20)/20;
+  const bb=[r2(b.getSouth())-.05,r2(b.getWest())-.05,r2(b.getNorth())+.05,r2(b.getEast())+.05].map(x=>x.toFixed(2)).join(",");
+  const withParking=z>=14;const ck=bb+(withParking?"p":"");
+  let data=ACCESS.cache.get(ck);
+  if(!data){
+    if(ACCESS.busy)return;ACCESS.busy=true;
+    const q=`[out:json][timeout:20];(nwr["leisure"="slipway"](${bb});nwr["leisure"="fishing"](${bb});nwr["tourism"="camp_site"](${bb});${withParking?`nwr["amenity"="parking"]["access"!="private"](${bb});`:""});out center 400;`;
+    try{const j=await getJSON("https://overpass-api.de/api/interpreter?data="+encodeURIComponent(q),25000);data=j.elements||[];ACCESS.cache.set(ck,data)}
+    catch(e){data=null}finally{ACCESS.busy=false}
+    if(!data){if(note)note.textContent="Access points couldn't load. Try again in a minute.";return}
+  }
+  ACCESS.layer.clearLayers();
+  for(const el of data){
+    const t=el.tags||{};const type=t.leisure==="slipway"?"slipway":t.leisure==="fishing"?"fishing":t.tourism==="camp_site"?"camp":"parking";
+    const lat=el.lat??el.center?.lat,lon=el.lon??el.center?.lon;if(lat==null)continue;
+    const m=L.marker([lat,lon],{icon:accIcon(type)}).addTo(ACCESS.layer);
+    const fee=t.fee==="yes"?"Fee":t.fee==="no"?"Free":"";
+    m.bindPopup(`<div class="mpop"><b>${esc(t.name||ACC_TYPES[type].label)}</b><div class="small muted">${ACC_TYPES[type].label}${t.operator?" · "+esc(t.operator):""}${fee?" · "+fee:""}</div><div class="row" style="margin-top:8px"><a class="btn ghost small" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}" target="_blank" rel="noopener" style="text-decoration:none">Directions</a>${MAP.mode==="float"?"":`<button class="btn ghost small" type="button" data-floatfrom="${lat},${lon}">Float from here</button>`}</div><div class="small muted" style="margin-top:6px">From OpenStreetMap. Check signs on site.</div></div>`);
+    m.on("popupopen",()=>{const bt=document.querySelector(`[data-floatfrom="${lat},${lon}"]`);if(bt)bt.onclick=()=>{MAP.map.closePopup();setMode("float");floatTap(window.L.latLng(lat,lon))}});
+  }
+}
+
+/* ---------- FLOAT PLANNER ---------- */
+const FLOAT={a:null,b:null,layer:null};
+function nearestOnLine(ll,c){
+  let best={d:Infinity,i:0,t:0};
+  const toXY=p=>[p[1]*Math.cos(ll.lat*Math.PI/180),p[0]];const P=toXY([ll.lat,ll.lng]);
+  for(let i=0;i<c.length-1;i++){const A=toXY(c[i]),B=toXY(c[i+1]);const dx=B[0]-A[0],dy=B[1]-A[1];const len=dx*dx+dy*dy||1e-12;
+    let t=((P[0]-A[0])*dx+(P[1]-A[1])*dy)/len;t=Math.max(0,Math.min(1,t));const x=A[0]+t*dx,y=A[1]+t*dy;const d=Math.hypot(P[0]-x,P[1]-y);
+    if(d<best.d)best={d,i,t}}
+  const p=[c[best.i][0]+(c[best.i+1][0]-c[best.i][0])*best.t,c[best.i][1]+(c[best.i+1][1]-c[best.i][1])*best.t];
+  return {...best,p,km:best.d*111};
+}
+function snapToRiver(ll){
+  let best=null;
+  for(const r of RIVERS){const c=LINES[r.id];if(!c)continue;const n=nearestOnLine(ll,c);if(!best||n.km<best.km)best={r,c,...n}}
+  return best&&best.km<2?best:null;
+}
+function alongMiles(c,a,b){
+  const [s,e]=a.i+a.t<=b.i+b.t?[a,b]:[b,a];
+  const L=window.L;const pts=[s.p,...c.slice(s.i+1,e.i+1),e.p];
+  let m=0;for(let i=1;i<pts.length;i++)m+=L.latLng(pts[i-1]).distanceTo(L.latLng(pts[i]));
+  return {mi:m/1609.344,pts,downstream:a.i+a.t<=b.i+b.t};
+}
+function floatTap(ll){
+  const L=window.L;const s=snapToRiver(ll);
+  if(!s){toast("Tap closer to one of the colored river lines");return}
+  if(!FLOAT.layer)FLOAT.layer=L.layerGroup().addTo(MAP.map);
+  if(!FLOAT.a||FLOAT.b){FLOAT.layer.clearLayers();FLOAT.a=s;FLOAT.b=null;
+    L.marker(s.p,{icon:L.divIcon({className:"",html:`<span class="accic" style="background:#2b7a4b;width:30px;height:30px">In</span>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(FLOAT.layer);
+    sheet(`<div class="row" style="justify-content:space-between"><div><b>Put-in set on the ${esc(s.r.name)}</b><div class="small muted">Now tap the take-out downstream.</div></div><button class="btn ghost small" type="button" id="cancelMode">Cancel</button></div>`);
+    $("#cancelMode").onclick=()=>setMode(null);return}
+  if(s.r.id!==FLOAT.a.r.id){toast(`Pick a take-out on the ${FLOAT.a.r.name}`);return}
+  FLOAT.b=s;const a=FLOAT.a;const {mi,pts,downstream}=alongMiles(a.c,a,s);
+  L.polyline(pts,{color:"#e5603f",weight:7,opacity:.95}).addTo(FLOAT.layer);
+  L.marker(s.p,{icon:L.divIcon({className:"",html:`<span class="accic" style="background:#b5372d;width:30px;height:30px">Out</span>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(FLOAT.layer);
+  const r=a.r;const c=conditions(r);const f=r.flow||{};const mid=f.idealLo!=null?(f.idealLo+f.idealHi)/2:null;
+  const speed=Math.max(1,Math.min(4,mid&&c.cfs?2*Math.sqrt(c.cfs/mid):2));
+  const drift=mi/speed,fishing=mi/(speed*.45);
+  const h=x=>x<1?Math.round(x*60)+" min":(Math.round(x*2)/2)+" hr";
+  const warn=!downstream?"That take-out is upstream of the put-in. Rivers only float one way. ":"";
+  const pass=/Boater Pass/.test(r.regs)?"A Deschutes Boater Pass is required for every person. ":"";
+  const nofish=/floating device/.test(r.regs)?"No fishing from the boat on this river; pull over to fish. ":"";
+  sheet(`<div class="stack"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><b style="font-family:var(--display);font-size:1.5rem">${mi.toFixed(1)} river miles</b><div class="small muted">${esc(r.name)}${c.cfs!=null?" at "+fmt(c.cfs)+" cfs":""}</div></div><button class="btn ghost small" type="button" id="fClose">Done</button></div>
+    <div class="readout"><div><b>${h(drift)}</b><span>just drifting</span></div><div><b>${h(fishing)}</b><span>with fishing</span></div><div><b id="fShuttle">…</b><span>shuttle drive</span></div></div>
+    ${warn||pass||nofish?`<div class="note small">${esc(warn+pass+nofish)}</div>`:""}
+    <p class="small muted" style="margin:0">Drift speed is estimated from the current flow. Scout rapids, dams and diversions before you go.</p>
+    <div class="row"><button class="btn small" type="button" id="fCopy">Copy float plan</button><a class="btn ghost small" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&origin=${a.p[0]},${a.p[1]}&destination=${s.p[0]},${s.p[1]}" target="_blank" rel="noopener">Shuttle directions</a></div></div>`);
+  $("#fClose").onclick=()=>setMode(null);
+  let shuttle=null;
+  getJSON(`https://router.project-osrm.org/route/v1/driving/${a.p[1]},${a.p[0]};${s.p[1]},${s.p[0]}?overview=false`,12000).then(j=>{shuttle=j.routes?.[0]?.duration;const el=$("#fShuttle");if(el)el.textContent=shuttle!=null?driveTxt(Math.round(shuttle/60)):"—"}).catch(()=>{const el=$("#fShuttle");if(el)el.textContent="—"});
+  $("#fCopy").onclick=()=>copyText(`Float: ${r.name}\n${mi.toFixed(1)} river miles. About ${h(drift)} drifting, ${h(fishing)} with fishing.\nFlow: ${c.cfs!=null?fmt(c.cfs)+" cfs":"unknown"}\nPut-in: https://maps.google.com/?q=${a.p[0]},${a.p[1]}\nTake-out: https://maps.google.com/?q=${s.p[0]},${s.p[1]}\nShuttle: ${shuttle!=null?driveTxt(Math.round(shuttle/60))+" drive":"see map"}\n${pass}${nofish}`);
+}
+
+/* ---------- GAUGES DASHBOARD ---------- */
+function miniSpark(r){const h=histOf(r);if(!h)return "";return sparkline(h.filter(p=>p[0]>=h[h.length-1][0]-72*36e5),90,28,{noDot:false})}
+function renderGauges(){
+  const el=$("#gaugeList");if(!el)return;
+  const rows=RIVERS.filter(r=>r.gauge).sort((a,b)=>(isFav(b.id)-isFav(a.id))||a.name.localeCompare(b.name)).map(r=>{
+    const c=conditions(r);const tr=trendOf(r);const rf=rateFlow(r,c.cfs);
+    const arrow=tr&&tr.d24!=null?(tr.d24>.05?`<span style="color:var(--warn)">▲ ${Math.round(tr.d24*100)}%</span>`:tr.d24<-.05?`<span style="color:var(--river)">▼ ${Math.round(-tr.d24*100)}%</span>`:`<span class="muted">steady</span>`):"";
+    return `<a class="rrow" href="#river-${esc(r.id)}" style="grid-template-columns:4px 1fr 92px auto"><span class="st ${rf.k}"></span>
+      <div><div class="nm" style="font-size:1rem">${esc(r.name)}${isFav(r.id)?` <span style="color:#d9a520">★</span>`:""}</div><div class="sc">${esc(r.section)}</div></div>
+      <div>${miniSpark(r)}</div>
+      <div class="rt"><b class="num" style="font-family:var(--display);font-size:1.15rem">${fmt(c.cfs)}<span class="small muted" style="font-weight:400"> cfs</span></b><span class="v">${arrow}${c.wtF!=null?` · ${fmt(c.wtF)}°`:""}</span></div></a>`}).join("");
+  el.innerHTML=rows||`<div class="card small muted">No gauges yet.</div>`;
+}
+async function findNearby(){
+  const out=$("#nearbyOut");out.innerHTML=`<p class="small muted">Looking for stream gauges…</p>`;
+  const go=async(lat,lon)=>{
+    const d=.6;const bb=[lon-d,lat-d*.75,lon+d,lat+d*.75].map(x=>x.toFixed(3)).join(",");
+    try{
+      const [flows,locs]=await Promise.all([
+        getJSON(`https://api.waterdata.usgs.gov/ogcapi/v0/collections/latest-continuous/items?f=json&bbox=${bb}&parameter_code=00060&limit=300`,20000),
+        getJSON(`https://api.waterdata.usgs.gov/ogcapi/v0/collections/monitoring-locations/items?f=json&bbox=${bb}&site_type_code=ST&limit=300`,20000)]);
+      const names=new Map((locs.features||[]).map(f=>[f.properties?.id||f.id,{name:f.properties?.monitoring_location_name,geo:f.geometry?.coordinates}]));
+      const have=new Set(RIVERS.map(r=>r.gauge));const seen=new Set();
+      const list=(flows.features||[]).map(f=>{const id=f.properties?.monitoring_location_id;const meta=names.get(id)||{};const g=meta.geo||f.geometry?.coordinates;
+        return {id,site:String(id||"").replace("USGS-",""),name:meta.name||id,cfs:parseFloat(f.properties?.value),lat:g?.[1],lon:g?.[0]}})
+        .filter(x=>x.id&&!isNaN(x.cfs)&&x.lat!=null&&!seen.has(x.id)&&seen.add(x.id))
+        .map(x=>({...x,mi:haversineMi(lat,lon,x.lat,x.lon)})).sort((a,b)=>a.mi-b.mi).slice(0,25);
+      out.innerHTML=list.length?`<div class="list">${list.map(x=>`<div class="rrow" style="grid-template-columns:4px 1fr auto"><span class="st na"></span><div><div class="nm" style="font-size:.98rem">${esc(titleCase(x.name))}</div><div class="sc">${fmt(x.cfs)} cfs · ${x.mi.toFixed(0)} mi away · USGS ${esc(x.site)}</div></div>
+        <div class="rt">${have.has(x.site)?`<span class="pill good">Added</span>`:`<button class="btn ghost small" type="button" data-addg="${esc(x.site)}" data-name="${esc(titleCase(x.name))}" data-lat="${x.lat}" data-lon="${x.lon}">Add</button>`}</div></div>`).join("")}</div>`
+        :`<p class="small muted">No active stream gauges within about 40 miles.</p>`;
+      $$("[data-addg]").forEach(b=>b.onclick=()=>{
+        const c={id:"g-"+b.dataset.addg,name:b.dataset.name,section:"USGS "+b.dataset.addg,gauge:b.dataset.addg,gaugeName:b.dataset.name,lat:+b.dataset.lat,lon:+b.dataset.lon,idealLo:null,idealHi:null,type:"freestone"};
+        const list=store.get("custom",[]).filter(x=>x.id!==c.id);list.push(c);store.set("custom",list);loadRivers();fillSelects();
+        loadConditions(riverById(c.id)).then(()=>{b.outerHTML=`<span class="pill good">Added</span>`;renderGauges();toast("Added "+c.name+". Set its fishable range on the river page.")});
+      });
+    }catch(e){out.innerHTML=`<p class="small">Couldn't reach USGS just now. Try again in a minute.</p>`}
+  };
+  if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>go(p.coords.latitude,p.coords.longitude),()=>{const o=origin();go(o.lat,o.lon)},{timeout:10000});
+  else{const o=origin();go(o.lat,o.lon)}
+}
+function titleCase(s){return String(s||"").toLowerCase().replace(/\b(\w)/g,m=>m.toUpperCase()).replace(/\b(Nr|Ab|Bl|Blw|Abv|Or|Wa|Id|Ca|Usgs)\b/g,m=>({Nr:"near",Ab:"above",Abv:"above",Bl:"below",Blw:"below",Or:"OR",Wa:"WA",Id:"ID",Ca:"CA",Usgs:"USGS"})[m])}
 
 /* ---------- theme, more, install ---------- */
 function applyTheme(){const t=store.get("theme","");if(t)document.documentElement.setAttribute("data-theme",t);else document.documentElement.removeAttribute("data-theme")}

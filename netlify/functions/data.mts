@@ -8,6 +8,8 @@ const ALLOWED = new Set([
   "api.open-meteo.com",
   "api.water.noaa.gov",
   "router.project-osrm.org",
+  "api.water.usgs.gov",
+  "overpass-api.de",
 ]);
 
 export default async (req: Request) => {
