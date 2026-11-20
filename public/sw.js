@@ -2,7 +2,7 @@
 // - Pages load network-first (updates show right away) with an offline fallback.
 // - Map tiles are cache-first, so areas you've viewed or saved work with no signal.
 // - Push notifications for flow alerts and crew posts.
-const CACHE = "driftline-v10";
+const CACHE = "driftline-v11";
 const TILES = "driftline-tiles-v1";
 const SHELL = ["/", "/manifest.webmanifest", "/favicon.svg", "/apple-touch-icon.png", "/icon-192.png", "/icon-512.png"];
 const TILE_HOSTS = ["server.arcgisonline.com", "gis.blm.gov"];
